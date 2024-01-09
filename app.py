@@ -13,5 +13,6 @@ async def on_ready():
 async def on_message(message):
     if message.channel.id == 1023950794543878205 and "grabvr.quest" not in message.content:
         await message.delete()
+        print(message.content)
 
 client.run(os.environ.get("bot"))
