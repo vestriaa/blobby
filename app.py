@@ -1,7 +1,4 @@
-import discord
-import json
-import time
-from typing import List
+import discord, json, time, os
 from discord import app_commands
 
 intents = discord.Intents.default()
