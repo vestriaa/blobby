@@ -11,6 +11,13 @@ log_channel_id = 1115066642741870662
 async def on_ready():
     await tree.sync(guild=discord.Object(id=1023949212670509076))
     print("Ready!")
+    
+@client.event
+async def on_message(message):
+    if message.channel.id == 1234567890 and "grabvr.quest" not in message.content:
+        await message.delete()
+
+    await client.process_commands(message)
 
 @tree.command(
     name='test',
