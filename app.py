@@ -14,7 +14,7 @@ async def on_ready():
     
 @client.event
 async def on_message(message):
-    if message.channel.id == 1234567890 and "grabvr.quest" not in message.content:
+    if message.channel.id == 1023950794543878205 and "grabvr.quest" not in message.content:
         await message.delete()
 
     await client.process_commands(message)
