@@ -9,23 +9,24 @@ const guildId = "1048213818775437394";
 async function registerCommands() {
     const url = `https://discord.com/api/v10/applications/${applicationId}//commands`;
     // const url = `https://discord.com/api/v10/applications/${applicationId}/guilds/${guildId}/commands`;
-    const response = await fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bot ${token}`
-        },
-        method: 'POST',
-        body: JSON.stringify(commands)
-    });
+    commands.forEach(async command => {
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bot ${token}`
+            },
+            method: 'POST',
+            body: JSON.stringify(command)
+        });
 
-    if (response.ok) {
-        console.log('Registered commands');
-    } else {
-        console.error('Error registering commands');
-        const text = await response.text();
-        console.error(text);
-    }
-    return response;
+        if (response.ok) {
+            console.log('Registered commands');
+        } else {
+            console.error('Error registering commands');
+            const text = await response.text();
+            console.error(text);
+        }
+    }); 
 }
 
 await registerCommands();
