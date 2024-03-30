@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
-import fs from 'fs';
+import commands from './commands.js';
 
-const commands = JSON.parse(fs.readFileSync('commands.json', 'utf8'));
 const token = process.env.DISCORD_TOKEN;
 const applicationId = process.env.DISCORD_APPLICATION_ID;
 const guildId = "1048213818775437394";
@@ -13,7 +12,7 @@ async function registerCommands() {
             'Content-Type': 'application/json',
             Authorization: `Bot ${token}`
         },
-        method: 'POST',
+        method: 'PUT',
         body: JSON.stringify(commands)
     });
 
