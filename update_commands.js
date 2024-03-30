@@ -1,5 +1,4 @@
-import fetch from 'node-fetch';
-
+const fetch = require('node-fetch');
 const COMMANDS = require('./commands.json');
 const token = process.env.DISCORD_TOKEN;
 const applicationId = process.env.DISCORD_APPLICATION_ID;
