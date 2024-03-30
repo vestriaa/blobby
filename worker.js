@@ -1,4 +1,5 @@
 const nacl = require("tweetnacl");
+import { Buffer } from 'node:buffer';
 
 export default {
     async fetch(request, env, ctx) {
@@ -9,12 +10,10 @@ export default {
         console.log(signature, timestamp, body);
 
         const isVerified = signature && timestamp && nacl.sign.detached.verify(
-            new TextEncoder().encode(timestamp + body),
-            Array.prototype.map.call(new TextEncoder().encode(signature),byte => ('0' + byte.toString(16)).slice(-2)).join(''),
-            Array.prototype.map.call(new TextEncoder().encode(env.PUBLIC_KEY),byte => ('0' + byte.toString(16)).slice(-2)).join('')
+            Buffer.from(timestamp + body),
+            Buffer.from(signature, "hex"),
+            Buffer.from(env.PUBLIC_KEY, "hex")
         );
-
-        Array.prototype.map.call(bytes,byte => ('0' + byte.toString(16)).slice(-2)).join('');
 
         if (!isVerified) {
             console.log("invalid request signature");
