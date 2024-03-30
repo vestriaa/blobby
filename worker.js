@@ -54,16 +54,38 @@ export default {
             } else if (command == "trending") {
                 const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
                 const levelData = await levelResponse.json();
-                const top5 = levelData.slice(0, 5);
-                let description = [];
-                top5.forEach((level, index) => {
-                    description.push(`**#${index + 1}** ${level.title} - ${level.change}`);
-                });
-                const embeds = [{
-                    title: `Trending Levels`,
-                    description: description.join("\n"),
-                    color: 0x00ffff
-                }];
+                let embeds = [];
+                for (let i = 0; i < 10; i++) {
+                    const level = levelData[i];
+                    const embed = {
+                        "type": "rich",
+                        "title": `${level.title}`,
+                        "description": `${level.description}`,
+                        "color": 0x618dc3,
+                        "fields": [
+                            {
+                                "name": `Todays Plays`,
+                                "value": `${level.change}`,
+                                "inline": true
+                            }, {
+                                "name": `Total Plays`,
+                                "value": `${level.statistics.total_played}`,
+                                "inline": true
+                            }
+                        ],
+                        "thumbnail": {
+                            "url": `https://grab-images.slin.dev/${level?.images?.thumb?.key}`,
+                            "height": 288,
+                            "width": 512
+                        },
+                        "author": {
+                            "name": `${level.creator}`,
+                            "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`,
+                        },
+                        "url": `https://grab-tools.live/stats?tab=Trending`
+                    };
+                    embeds.push(embed);
+                }
                 return Response.json({
                     type: 4,
                     data: {
