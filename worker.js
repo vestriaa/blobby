@@ -5,7 +5,7 @@ export default {
 
         const signature = request.headers.get("x-signature-ed25519");
         const timestamp = request.headers.get("x-signature-timestamp");
-        const body = req.rawBody;
+        const body = request.rawBody;
         console.log(signature, timestamp, body);
 
         const isVerified = signature && timestamp && nacl.sign.detached.verify(
