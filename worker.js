@@ -5,14 +5,16 @@ export default {
 
         const signature = request.headers.get("x-signature-ed25519");
         const timestamp = request.headers.get("x-signature-timestamp");
-        const body = request.rawBody;
+        const body = await request.text();
         console.log(signature, timestamp, body);
 
         const isVerified = signature && timestamp && nacl.sign.detached.verify(
-            Buffer.from(timestamp + body),
-            Buffer.from(signature, "hex"),
-            Buffer.from(env.PUBLIC_KEY, "hex")
+            new TextEncoder().encode(timestamp + body),
+            Array.prototype.map.call(new TextEncoder().encode(signature),byte => ('0' + byte.toString(16)).slice(-2)).join(''),
+            Array.prototype.map.call(new TextEncoder().encode(env.PUBLIC_KEY),byte => ('0' + byte.toString(16)).slice(-2)).join('')
         );
+
+        Array.prototype.map.call(bytes,byte => ('0' + byte.toString(16)).slice(-2)).join('');
 
         if (!isVerified) {
             console.log("invalid request signature");
