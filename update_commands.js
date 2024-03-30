@@ -24,4 +24,4 @@ async function registerCommands() {
     return response;
 }
 
-await registerCommands();
+registerCommands();
