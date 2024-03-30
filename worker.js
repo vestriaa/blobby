@@ -5,8 +5,8 @@ export default {
 
         const signature = request.headers.get("x-signature-ed25519");
         const timestamp = request.headers.get("x-signature-timestamp");
-        console.log(signature, timestamp);
-        const body = request.rawBody;
+        const body = await request.text();
+        console.log(signature, timestamp, body);
 
         const isVerified = signature && timestamp && verifyKey(body, signature, timestamp, env.PUBLIC_KEY);
 
