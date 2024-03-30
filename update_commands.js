@@ -14,7 +14,7 @@ async function registerCommands() {
             'Content-Type': 'application/json',
             Authorization: `Bot ${token}`
         },
-        method: 'PUT',
+        method: 'POST',
         body: JSON.stringify(commands)
     });
 
