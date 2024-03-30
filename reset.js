@@ -57,5 +57,5 @@ async function leaveGuilds() {
     }
 }
 
-await resetCommands();
+// await resetCommands();
 await leaveGuilds();
