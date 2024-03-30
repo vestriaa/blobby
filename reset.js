@@ -37,6 +37,7 @@ async function leaveGuilds() {
     console.log(guilds);
     for (const guild of guilds) {
         if (guild.id !== guildId) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
             const url = `https://discord.com/api/v10/users/@me/guilds/${guild.id}`;
             const response = await fetch(url, {
                 headers: {
