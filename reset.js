@@ -28,7 +28,6 @@ async function leaveGuilds() {
     const url = `https://discord.com/api/v10/users/@me/guilds`;
     const response = await fetch(url, {
         headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bot ${token}`
         },
         method: 'GET'
@@ -41,7 +40,6 @@ async function leaveGuilds() {
             const url = `https://discord.com/api/v10/users/@me/guilds/${guild.id}`;
             const response = await fetch(url, {
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bot ${token}`
                 },
                 method: 'DELETE'
