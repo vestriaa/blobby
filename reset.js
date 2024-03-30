@@ -33,7 +33,7 @@ async function leaveGuilds() {
         },
         method: 'GET'
     });
-    const guilds = response.json();
+    const guilds = await response.json();
     console.log(guilds);
     for (const guild of guilds) {
         if (guild.id !== guildId) {
