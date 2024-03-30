@@ -20,7 +20,8 @@ export default {
             return new Response("invalid request signature", {status: 401});
         }
 
-        if (body.type == 1) {
+        const json = JSON.parse(body);
+        if (json.type == 1) {
             console.log("PONG");
             return Response.json({
                 type: 1
