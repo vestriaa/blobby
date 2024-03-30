@@ -34,7 +34,7 @@ export default {
                     levelData.forEach(level => {
                         const daysOld = (now - level?.update_timestamp) / 1000 / 60 / 60 / 24;
                         if (daysOld > 100) {
-                            description.push(`${level.title} ${Math.floor(daysOld)}d`);
+                            description.push(`**${Math.floor(daysOld)}d** ${level.title}`);
                         }
                     });
                     const embeds = [{
@@ -54,7 +54,7 @@ export default {
                     break;
             
                 default:
-                    return new Response("invalid request type", {status: 400});
+                    return new Response("invalid command", {status: 400});
             }
         }
 
