@@ -2,6 +2,32 @@ const nacl = require("tweetnacl");
 import { Buffer } from 'node:buffer';
 
 export default {
+    async generateLevelEmbed(level, fields = []) {
+        return {
+            "type": "rich",
+            "title": `${level.title}`,
+            "description": `${level.description}`,
+            "color": 0x618dc3,
+            "fields": fields,
+            "thumbnail": {
+                "url": `https://grab-images.slin.dev/${level?.images?.thumb?.key}`,
+                "height": 288,
+                "width": 512
+            },
+            "author": {
+                "name": `${level.creator}`,
+                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`,
+            },
+            "url": `https://grab-tools.live/stats`
+        }
+    },
+
+    numberWithCommas(x) {
+        let parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    },
+
     async fetch(request, env, ctx) {
 
         const signature = request.headers.get("x-signature-ed25519");
@@ -54,38 +80,127 @@ export default {
             } else if (command == "trending") {
                 const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
                 const levelData = await levelResponse.json();
-                let embeds = [];
-                for (let i = 0; i < 10; i++) {
-                    const level = levelData[i];
-                    const embed = {
-                        "type": "rich",
-                        "title": `${level.title}`,
-                        "description": `${level.description}`,
-                        "color": 0x618dc3,
-                        "fields": [
-                            {
-                                "name": `Todays Plays`,
-                                "value": `${level.change}`,
-                                "inline": true
-                            }, {
-                                "name": `Total Plays`,
-                                "value": `${level.statistics.total_played}`,
-                                "inline": true
-                            }
-                        ],
-                        "thumbnail": {
-                            "url": `https://grab-images.slin.dev/${level?.images?.thumb?.key}`,
-                            "height": 288,
-                            "width": 512
-                        },
-                        "author": {
-                            "name": `${level.creator}`,
-                            "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`,
-                        },
-                        "url": `https://grab-tools.live/stats?tab=Trending`
-                    };
-                    embeds.push(embed);
-                }
+                const top5 = levelData.slice(0, 5);
+                let description = [];
+                top5.forEach((level, index) => {
+                    description.push(`**#${index + 1}** ${level.title} - ${level.change}`);
+                });
+                const embeds = [{
+                    title: `Trending Levels`,
+                    description: description.join("\n"),
+                    color: 0x00ffff
+                }];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: embeds,
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "toptrending") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
+                const levelData = await levelResponse.json();
+                const level = levelData[0];
+                const fields = [
+                    {
+                        "name": `Todays Plays`,
+                        "value": `${level.change}`,
+                        "inline": true
+                    }, {
+                        "name": `Total Plays`,
+                        "value": `${level.statistics.total_played}`,
+                        "inline": true
+                    }
+                ];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [await this.generateLevelEmbed(level, fields)],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "topunbeaten") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                const levelData = await levelResponse.json();
+                const level = levelData[0];
+                const fields = [
+                    {
+                        "name": `Days Unbeaten`,
+                        "value": `${(Date.now() - level?.update_timestamp) / 1000 / 60 / 60 / 24}`,
+                        "inline": false
+                    }
+                ];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [await this.generateLevelEmbed(level, fields)],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "newestunbeaten") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                const levelData = await levelResponse.json();
+                const level = levelData[levelData.length - 1];
+                const fields = [
+                    {
+                        "name": `Days Unbeaten`,
+                        "value": `${(Date.now() - level?.update_timestamp) / 1000 / 60 / 60 / 24}`,
+                        "inline": false
+                    }
+                ];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [await this.generateLevelEmbed(level, fields)],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "globalstats") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/all_verified.json");
+                const levelData = await levelResponse.json();
+                let globalStats = {
+                    "plays": 0,
+                    "verified_maps": 0,
+                    "todays_plays": 0,
+                    "average_difficulty": 0,
+                    "average_plays": 0,
+                    "average_likes": 0,
+                    "average_time": 0,
+                    "complexity": 0,
+                    "iterations": 0,
+                    "average_complexity": 0,
+                };
+                levelData.forEach(level => {
+                    globalStats.plays += level.statistics.total_played;
+                    globalStats.verified_maps += 1;
+                    globalStats.todays_plays += level.change;
+                    globalStats.average_difficulty += level.statistics.difficulty;
+                    globalStats.average_likes += level.statistics.liked;
+                    globalStats.average_time += level.statistics.time;
+                    globalStats.complexity += level.complexity;
+                    globalStats.iterations += parseInt(level.data_key.split(':')[3]);
+                });
+                globalStats.average_difficulty /= globalStats.verified_maps;
+                globalStats.average_likes /= globalStats.verified_maps;
+                globalStats.average_time /= globalStats.verified_maps;
+                globalStats.average_plays = globalStats.plays / globalStats.verified_maps;
+                globalStats.average_complexity = globalStats.complexity / globalStats.verified_maps;
+                const embeds = [{
+                    "type": "rich",
+                    "title": `Global Stats`,
+                    "description": `**Total plays:** ${numberWithCommas(globalStats.plays)}\n**Verified maps:** ${numberWithCommas(globalStats.verified_maps)}\n**Todays plays:** ${numberWithCommas(globalStats.todays_plays)}\n**Total complexity:** ${numberWithCommas(globalStats.complexity)}\n**Iterations:** ${numberWithCommas(globalStats.iterations)}\n**Average difficulty:** ${Math.round(globalStats.average_difficulty*100)}%\n**Average plays:** ${numberWithCommas(Math.round(globalStats.average_plays*100)/100)}\n**Average likes:** ${Math.round(globalStats.average_likes*100)}%\n**Average time:** ${Math.round(globalStats.average_time*100)/100}s\n**Average complexity:** ${numberWithCommas(Math.round(globalStats.average_complexity*100)/100)}`,
+                    "color": 0x618dc3,
+                    "fields": [],
+                    "url": `https://grab-tools.live/stats?tab=Global`
+                }];
                 return Response.json({
                     type: 4,
                     data: {
