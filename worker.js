@@ -3,8 +3,8 @@ import { verifyKey } from 'discord-interactions';
 export default {
     async fetch(request, env, ctx) {
 
-        const signature = request.headers["x-signature-ed25519"];
-        const timestamp = request.headers["x-signature-timestamp"];
+        const signature = request.headers.get("x-signature-ed25519");
+        const timestamp = request.headers.get("x-signature-timestamp");
         console.log(signature, timestamp);
         const body = request.rawBody;
 
@@ -21,7 +21,7 @@ export default {
                 type: 1
             });
         }
-        
+
         console.log("Command")
         return new Response('Hello World!');
 
