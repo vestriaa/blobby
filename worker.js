@@ -1,4 +1,4 @@
-import { nacl } from 'tweetnacl';
+const nacl = require("tweetnacl");
 
 export default {
     async fetch(request, env, ctx) {
