@@ -28,8 +28,20 @@ export default {
             });
         }
 
-        console.log("Command")
-        return new Response('Hello World!');
+        if (json.type == 2) {
+            console.log("Command")
+            return Response.json({
+                type: 4,
+                data: {
+                    tts: false,
+                    content: "I AM ALIVE!",
+                    embeds: [],
+                    allowed_mentions: { parse: [] }
+                }
+            });
+        }
+
+        return new Response("invalid request type", {status: 400});
 
     },
 };
