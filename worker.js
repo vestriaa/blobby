@@ -37,7 +37,7 @@ export default {
                     const unbeatenData = await unbeatenResponse.json();
                     const embeds = [{
                         title: "Unbeaten Levels",
-                        description: unbeatenData.levels.map(
+                        description: unbeatenData.map(
                             level => `**${level.title}**`
                         ).join("\n"),
                         color: 0xff0000
