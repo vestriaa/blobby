@@ -24,4 +24,4 @@ jobs:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         DISCORD_APPLICATION_ID: ${{ secrets.DISCORD_APPLICATION_ID }}
       run: |
-        node update_commands.js
+        node update_commands.cjs
