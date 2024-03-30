@@ -3,7 +3,7 @@
     "dependencies": {
         "node-fetch": "^2.6.1",
         "wrangler": "^3.41.0",
-        "discord-interactions": "^3.4.0"
+        "tweetnacl": "^1.0.3"
     },
     "scripts": {
         "register": "node update_commands.js",

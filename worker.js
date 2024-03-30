@@ -1,14 +1,18 @@
-import { verifyKey } from 'discord-interactions';
+import { nacl } from 'tweetnacl';
 
 export default {
     async fetch(request, env, ctx) {
 
         const signature = request.headers.get("x-signature-ed25519");
         const timestamp = request.headers.get("x-signature-timestamp");
-        const body = await request.text();
+        const body = req.rawBody;
         console.log(signature, timestamp, body);
 
-        const isVerified = signature && timestamp && verifyKey(body, signature, timestamp, env.PUBLIC_KEY);
+        const isVerified = signature && timestamp && nacl.sign.detached.verify(
+            Buffer.from(timestamp + body),
+            Buffer.from(signature, "hex"),
+            Buffer.from(env.PUBLIC_KEY, "hex")
+        );
 
         if (!isVerified) {
             console.log("invalid request signature");
