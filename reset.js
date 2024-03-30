@@ -34,23 +34,25 @@ async function leaveGuilds() {
         method: 'GET'
     });
     const guilds = response.json();
-
+    console.log(guilds);
     for (const guild of guilds) {
-        const url = `https://discord.com/api/v10/users/@me/guilds/${guild.id}`;
-        const response = await fetch(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bot ${token}`
-            },
-            method: 'DELETE'
-        });
+        if (guild.id !== guildId) {
+            const url = `https://discord.com/api/v10/users/@me/guilds/${guild.id}`;
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bot ${token}`
+                },
+                method: 'DELETE'
+            });
 
-        if (response.ok) {
-            console.log(`Left guild ${guild.id}`);
-        } else {
-            console.error(`Error leaving guild ${guild.id}`);
-            const text = await response.text();
-            console.error(text);
+            if (response.ok) {
+                console.log(`Left guild ${guild.id}`);
+            } else {
+                console.error(`Error leaving guild ${guild.id}`);
+                const text = await response.text();
+                console.error(text);
+            }
         }
     }
 }
