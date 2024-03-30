@@ -1,4 +1,4 @@
-name: Update commands
+name: Reset bot
 
 on:
   workflow_dispatch:
