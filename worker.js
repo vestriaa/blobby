@@ -3,11 +3,11 @@ import { verifyKey } from 'discord-interactions';
 export default {
     async fetch(request, env, ctx) {
 
-        const signature = request.get("X-Signature-Ed25519");
-        const timestamp = request.get("X-Signature-Timestamp");
+        const signature = request.headers["X-Signature-Ed25519"];
+        const timestamp = request.headers["X-Signature-Timestamp"];
         const body = request.rawBody;
 
-        const isVerified = verifyKey(body, signature, timestamp, env.PUBLIC_KEY);
+        const isVerified = signature && timestamp && verifyKey(body, signature, timestamp, env.PUBLIC_KEY);
 
         if (!isVerified) {
             return new Response("invalid request signature", {status: 401});
@@ -20,6 +20,6 @@ export default {
         }
         
         return new Response('Hello World!');
-        
+
     },
 };
