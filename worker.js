@@ -34,7 +34,7 @@ export default {
                     levelData.forEach(level => {
                         const daysOld = (now - level?.update_timestamp) / 1000 / 60 / 60 / 24;
                         if (daysOld > 100) {
-                            description.push(`${level.title} ${Math.round(daysOld)}d`);
+                            description.push(`${level.title} ${Math.floor(daysOld)}d`);
                         }
                     });
                     const embeds = [{
