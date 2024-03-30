@@ -1,4 +1,5 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+
 const COMMANDS = require('./commands.json');
 const token = process.env.DISCORD_TOKEN;
 const applicationId = process.env.DISCORD_APPLICATION_ID;
@@ -24,4 +25,4 @@ async function registerCommands() {
     return response;
 }
 
-registerCommands();
+await registerCommands();

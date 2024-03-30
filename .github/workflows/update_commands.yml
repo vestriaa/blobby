@@ -17,11 +17,11 @@ jobs:
         node-version: '14'
       
     - name: Install dependencies
-      run: npm install node-fetch
+      run: npm install
       
     - name: Run script
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         DISCORD_APPLICATION_ID: ${{ secrets.DISCORD_APPLICATION_ID }}
       run: |
-        node update_commands.cjs
+        node start
