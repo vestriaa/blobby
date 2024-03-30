@@ -7,8 +7,6 @@ export default {
         const signature = request.headers.get("x-signature-ed25519");
         const timestamp = request.headers.get("x-signature-timestamp");
         const body = await request.text();
-        console.log(signature, timestamp, body);
-
         const isVerified = signature && timestamp && nacl.sign.detached.verify(
             Buffer.from(timestamp + body),
             Buffer.from(signature, "hex"),
@@ -16,30 +14,32 @@ export default {
         );
 
         if (!isVerified) {
-            console.log("invalid request signature");
             return new Response("invalid request signature", {status: 401});
         }
 
         const json = JSON.parse(body);
         if (json.type == 1) {
-            console.log("PONG");
             return Response.json({
                 type: 1
             });
         }
 
         if (json.type == 2) {
-            console.log("Command")
-
             switch (json.data.name) {
                 case "unbeaten":
-                    const unbeatenResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
-                    const unbeatenData = await unbeatenResponse.json();
+                    const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                    const levelData = await levelResponse.json();
+                    const now = Date.now();
+                    const description = [];
+                    levelData.forEach(level => {
+                        const daysOld = (now - level?.update_timestamp) / 1000 / 60 / 60 / 24;
+                        if (daysOld > 100) {
+                            description.push(`${level.title} ${daysOld}d`);
+                        }
+                    });
                     const embeds = [{
-                        title: "Unbeaten Levels",
-                        description: unbeatenData.map(
-                            level => `**${level.title}**`
-                        ).join("\n"),
+                        title: `Unbeaten Levels (${levelData.length})`,
+                        description: description.join("\n"),
                         color: 0xff0000
                     }];
                     return Response.json({
