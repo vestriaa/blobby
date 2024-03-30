@@ -25,36 +25,54 @@ export default {
         }
 
         if (json.type == 2) {
-            switch (json.data.name) {
-                case "unbeaten":
-                    const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
-                    const levelData = await levelResponse.json();
-                    const now = Date.now();
-                    const description = [];
-                    levelData.forEach(level => {
-                        const daysOld = (now - level?.update_timestamp) / 1000 / 60 / 60 / 24;
-                        if (daysOld > 100) {
-                            description.push(`**${Math.floor(daysOld)}d** ${level.title}`);
-                        }
-                    });
-                    const embeds = [{
-                        title: `Unbeaten Levels (${levelData.length})`,
-                        description: description.join("\n"),
-                        color: 0xff0000
-                    }];
-                    return Response.json({
-                        type: 4,
-                        data: {
-                            tts: false,
-                            content: "",
-                            embeds: embeds,
-                            allowed_mentions: { parse: [] }
-                        }
-                    });
-                    break;
-            
-                default:
-                    return new Response("invalid command", {status: 400});
+            const command = json.data.name;
+            if (command == "unbeaten") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                const levelData = await levelResponse.json();
+                const now = Date.now();
+                const description = [];
+                levelData.forEach(level => {
+                    const daysOld = (now - level?.update_timestamp) / 1000 / 60 / 60 / 24;
+                    if (daysOld > 100) {
+                        description.push(`**${Math.floor(daysOld)}d** ${level.title}`);
+                    }
+                });
+                const embeds = [{
+                    title: `Unbeaten Levels (${levelData.length})`,
+                    description: description.join("\n"),
+                    color: 0xff0000
+                }];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: embeds,
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "trending") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
+                const levelData = await levelResponse.json();
+                const top5 = levelData.slice(0, 5);
+                let description = [];
+                top5.forEach((level, index) => {
+                    description.push(`**#${index + 1}** ${level.title} - ${level.change}`);
+                });
+                const embeds = [{
+                    title: `Trending Levels`,
+                    description: description.join("\n"),
+                    color: 0x00ffff
+                }];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: embeds,
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             }
         }
 
