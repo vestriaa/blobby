@@ -130,7 +130,7 @@ export default {
                 const fields = [
                     {
                         "name": `Days Unbeaten`,
-                        "value": `${(Date.now() - level?.update_timestamp) / 1000 / 60 / 60 / 24}`,
+                        "value": `${Math.floor((Date.now() - level?.update_timestamp) / 1000 / 60 / 60 / 24)}`,
                         "inline": false
                     }
                 ];
@@ -150,7 +150,7 @@ export default {
                 const fields = [
                     {
                         "name": `Days Unbeaten`,
-                        "value": `${(Date.now() - level?.update_timestamp) / 1000 / 60 / 60 / 24}`,
+                        "value": `${Math.floor((Date.now() - level?.update_timestamp) / 1000 / 60 / 60 / 24)}`,
                         "inline": false
                     }
                 ];
@@ -196,7 +196,7 @@ export default {
                 const embeds = [{
                     "type": "rich",
                     "title": `Global Stats`,
-                    "description": `**Total plays:** ${numberWithCommas(globalStats.plays)}\n**Verified maps:** ${numberWithCommas(globalStats.verified_maps)}\n**Todays plays:** ${numberWithCommas(globalStats.todays_plays)}\n**Total complexity:** ${numberWithCommas(globalStats.complexity)}\n**Iterations:** ${numberWithCommas(globalStats.iterations)}\n**Average difficulty:** ${Math.round(globalStats.average_difficulty*100)}%\n**Average plays:** ${numberWithCommas(Math.round(globalStats.average_plays*100)/100)}\n**Average likes:** ${Math.round(globalStats.average_likes*100)}%\n**Average time:** ${Math.round(globalStats.average_time*100)/100}s\n**Average complexity:** ${numberWithCommas(Math.round(globalStats.average_complexity*100)/100)}`,
+                    "description": `**Total plays:** ${this.numberWithCommas(globalStats.plays)}\n**Verified maps:** ${this.numberWithCommas(globalStats.verified_maps)}\n**Todays plays:** ${this.numberWithCommas(globalStats.todays_plays)}\n**Total complexity:** ${this.numberWithCommas(globalStats.complexity)}\n**Iterations:** ${this.numberWithCommas(globalStats.iterations)}\n**Average difficulty:** ${Math.round(globalStats.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(globalStats.average_plays*100)/100)}\n**Average likes:** ${Math.round(globalStats.average_likes*100)}%\n**Average time:** ${Math.round(globalStats.average_time*100)/100}s\n**Average complexity:** ${this.numberWithCommas(Math.round(globalStats.average_complexity*100)/100)}`,
                     "color": 0x618dc3,
                     "fields": [],
                     "url": `https://grab-tools.live/stats?tab=Global`
