@@ -1,6 +1,6 @@
 export const commands = [
     {
-        name: "test",
-        description: "test command"
+        name: "unbeaten",
+        description: "Get the current unbeaten levels list",
     }
 ];

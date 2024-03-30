@@ -30,15 +30,32 @@ export default {
 
         if (json.type == 2) {
             console.log("Command")
-            return Response.json({
-                type: 4,
-                data: {
-                    tts: false,
-                    content: "I AM ALIVE!",
-                    embeds: [],
-                    allowed_mentions: { parse: [] }
-                }
-            });
+
+            switch (json.data.name) {
+                case "unbeaten":
+                    const unbeatenResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                    const unbeatenData = await unbeatenResponse.json();
+                    const embeds = [{
+                        title: "Unbeaten Levels",
+                        description: unbeatenData.levels.map(
+                            level => `**${level.title}**`
+                        ).join("\n"),
+                        color: 0xff0000
+                    }];
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "",
+                            embeds: embeds,
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                    break;
+            
+                default:
+                    return new Response("invalid request type", {status: 400});
+            }
         }
 
         return new Response("invalid request type", {status: 400});
