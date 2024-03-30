@@ -1,9 +1,12 @@
 {
     "type": "module",
     "dependencies": {
-        "node-fetch": "^2.6.1"
+        "node-fetch": "^2.6.1",
+        "wrangler": "^3.41.0",
+        "discord-interactions": "^3.4.0"
     },
     "scripts": {
-        "start": "node update_commands.js"
+        "register": "node update_commands.js",
+        "publish": "wrangler deploy"
     }
 }
