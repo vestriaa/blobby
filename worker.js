@@ -331,7 +331,7 @@ export default {
                     userIDInt >>= BigInt(32);
                     userIDInt >>= BigInt(32);
                     const joinDate = new Date(Number(userIDInt));
-                    const timeString = joinDate.toLocaleString('en-US', { timeZone: "UTC" });
+                    const unixTime = Math.floor(joinDate.getTime() / 1000);
 
                     for (let level of levelData) {
                         if (level?.tags?.includes("ok")) {
@@ -363,7 +363,7 @@ export default {
                             embeds: [{
                                 "type": "rich",
                                 "title": `${userName}'s stats`,
-                                "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** ${timeString}\n**Total maps:** ${this.numberWithCommas(statistics.maps)}\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
+                                "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** <t:${unixTime}>\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
                                 "color": parseInt(primaryColorAsHex, 16),
                                 "fields": [],
                                 "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
