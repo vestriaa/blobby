@@ -457,7 +457,7 @@ export default {
                 }
             } else if(command == "random") {
                 const isVerified = json.data.options[0].value;
-                const levelUrl = "https://api.slin.dev/grab/v1/get_random_level";
+                let levelUrl = "https://api.slin.dev/grab/v1/get_random_level";
                 if (isVerified) {levelUrl += "?type=ok"}
                 const levelResponse = await fetch(levelUrl);
                 const levelData = await levelResponse.json();
