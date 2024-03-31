@@ -28,7 +28,7 @@ export default {
         return parts.join(".");
     },
 
-    formatTime(seconds) {
+    formatTime(seconds, maxDecimals) {
         let minutes = Math.floor(seconds / 60);
         seconds = (seconds % 60).toFixed(maxDecimals);
         if (minutes < 10) { minutes = "0" + minutes; }
@@ -244,7 +244,6 @@ export default {
                 const queryTitle = json.data.options[0].value;
                 const queryCreator = json.data.options[1].value;
                 const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=search&search_term=${queryTitle}`;
-                console.log(levelSearch);
                 const levelResponse = await fetch(levelSearch);
                 const levelData = await levelResponse.json();
                 const foundLevels = []
@@ -261,13 +260,19 @@ export default {
                 foundLevels.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))
                 if(foundLevels.length >= 1) {
                     const levelID = foundLevels[0].identifier;
-                    console.log(levelID);
                     const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
                     const leaderboardResponse = await fetch(leaderboardUrl);
                     const leaderboardData = await leaderboardResponse.json();
                     let description = [];
+                    let maxDecimals = 0;
+                    leaderboardData.forEach((entry) => {
+                        let decimals = entry.best_time.toString().split(".")[1];
+                        if (decimals) {
+                            maxDecimals = Math.max(maxDecimals, decimals.length);
+                        }
+                    });
                     for(let i = 0; i < Math.min(10, leaderboardData.length); i++) {
-                        description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${this.formatTime(leaderboardData[i].best_time)}`);
+                        description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${this.formatTime(leaderboardData[i].best_time, maxDecimals)}`);
                     }
                     return Response.json({
                         type: 4,
