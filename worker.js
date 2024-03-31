@@ -214,12 +214,14 @@ export default {
                     "average_complexity": 0,
                 };
                 levelData.forEach(level => {
-                    globalStats.plays += level.statistics.total_played;
                     globalStats.verified_maps += 1;
                     globalStats.todays_plays += level.change;
-                    globalStats.average_difficulty += level.statistics.difficulty;
-                    globalStats.average_likes += level.statistics.liked;
-                    globalStats.average_time += level.statistics.time;
+                    if ("statistics" in level) {
+                        globalStats.plays += level.statistics.total_played;
+                        globalStats.average_difficulty += level.statistics.difficulty;
+                        globalStats.average_likes += level.statistics.liked;
+                        globalStats.average_time += level.statistics.time;
+                    }
                     globalStats.complexity += level.complexity;
                     globalStats.iterations += parseInt(level.data_key.split(':')[3]);
                 });
@@ -343,11 +345,13 @@ export default {
                             statistics.verified_maps += 1;
                             statistics.verified_plays += level?.statistics?.total_played || 0;
                         }
-                        statistics.plays += level?.statistics?.total_played || 0;
+                        if ("statistics" in level) {
+                            statistics.plays += level.statistics.total_played;
+                            statistics.average_difficulty += level.statistics.difficulty;
+                            statistics.average_likes += level.statistics.liked;
+                            statistics.average_time += level.statistics.time;
+                        }
                         statistics.maps += 1;
-                        statistics.average_difficulty += level.statistics.difficulty;
-                        statistics.average_likes += level?.statistics?.liked || 0;
-                        statistics.average_time += level?.statistics?.time || 0;
                         statistics.complexity += level.complexity;
                     }
                     statistics.average_difficulty /= statistics.maps;
