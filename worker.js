@@ -244,6 +244,7 @@ export default {
                 const queryTitle = json.data.options[0].value;
                 const queryCreator = json.data.options[1].value;
                 const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=search&search_term=${queryTitle}`;
+                console.log(levelSearch);
                 const levelResponse = await fetch(levelSearch);
                 const levelData = await levelResponse.json();
                 const foundLevels = []
@@ -260,6 +261,7 @@ export default {
                 foundLevels.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))
                 if(foundLevels.length >= 1) {
                     const levelID = foundLevels[0].identifier;
+                    console.log(levelID);
                     const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
                     const leaderboardResponse = await fetch(leaderboardUrl);
                     const leaderboardData = await leaderboardResponse.json();
@@ -283,8 +285,7 @@ export default {
                             allowed_mentions: { parse: [] }
                         }
                     });
-                }
-                else{
+                } else {
                     return Response.json({
                     type: 4,
                     data: {
