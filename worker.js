@@ -431,8 +431,8 @@ export default {
                             if (items["body/neck"]) {details.neck = items["body/neck"].replace("_basic", "").replace("body_neck_", "").replaceAll("_", " ")}
                         }
                     }
-                    const primaryColorAsHex = `${colorComponentToHex(details.primary[0])}${colorComponentToHex(details.primary[1])}${colorComponentToHex(details.primary[2])}`;
-                    const secondaryColorAsHex = `${colorComponentToHex(details.secondary[0])}${colorComponentToHex(details.secondary[1])}${colorComponentToHex(details.secondary[2])}`;
+                    const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
+                    const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
                     const roles = [details.moderator, details.creator, details.verifier].map((role, index) => role ? ["Moderator", "Creator", "Verifier"][index] : null).filter(role => role !== null);
                     return Response.json({
                         type: 4,
