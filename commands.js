@@ -107,7 +107,7 @@ export const commands = [
             },
             {
                 name: "link",
-                deacription: "Link to the level",
+                description: "Link to the level",
                 required: false,
                 type: 3
             }
