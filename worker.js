@@ -382,6 +382,95 @@ export default {
                         }
                     });
                 }
+            } else if (command == "whois") {
+                const queryUsername = json.data.options[0].value;
+                const searchUrl = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryUsername}`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                if(searchData.length >= 1) {
+                    const userID = searchData[0].user_id;
+                    const userName = searchData[0].user_name;
+                    let details = {
+                        primary: [0,0,0],
+                        secondary: [0,0,0],
+                        hat: "none",
+                        face: "none",
+                        head: "default",
+                        grapple: "default",
+                        hands: "claw",
+                        checkpoint: "default",
+                        neck: "none",
+                        creator: false,
+                        moderator: false,
+                        verifier: false
+                    };
+                    const player = searchData[0];
+                    if (player.is_verifier) { details.verifier = true; }
+                    if (player.is_creator) { details.creator = true; }
+                    if (player.is_moderator) { details.moderator = true; }
+                    if (player.active_customizations) {
+                        if (player.active_customizations?.player_color_primary?.color) {
+                            details.primary = player.active_customizations.player_color_primary.color;
+                        }
+                        if (player.active_customizations?.player_color_secondary?.color) {
+                            details.secondary = player.active_customizations.player_color_secondary.color;
+                        }
+                        if (player.active_customizations.items) {
+                            const items = player.active_customizations.items;
+                            if (items["head/glasses"]) {details.face = items["head/glasses"].replace("head_glasses_", "").replaceAll("_", " ")}
+                            if (items["grapple/hook"]) {details.grapple = items["grapple/hook"].replace("grapple_hook_", "").replaceAll("_", " ")}
+                            if (items["head/hat"]) {details.hat = items["head/hat"].replace("head_hat_", "").replaceAll("_", " ")}
+                            if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("checkpoint_", "").replaceAll("_", " ")}
+                            if (items["head"]) {details.head = items["head"].replace("head_", "").replaceAll("_", " ")}
+                            if (items["hand"]) {details.hands = items["hand"].replace("hand_", "").replaceAll("_", " ")}
+                            if (items["body/neck"]) {details.neck = items["body/neck"].replace("body_neck_", "").replaceAll("_", " ")}
+                        }
+                    }
+                    const primaryColorAsHex = `${(details.primary[0] * 255).toString(16).padStart(2, '0')}${(details.primary[1] * 255).toString(16).padStart(2, '0')}${(details.primary[2] * 255).toString(16).padStart(2, '0')}`;
+                    const secondaryColorAsHex = `${(details.secondary[0] * 255).toString(16).padStart(2, '0')}${(details.secondary[1] * 255).toString(16).padStart(2, '0')}${(details.secondary[2] * 255).toString(16).padStart(2, '0')}`;
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "",
+                            embeds: [{
+                                "type": "rich",
+                                "title": `${userName}'s details`,
+                                "description": `**Primary:** #${primaryColorAsHex}\n**Secondary:** #${secondaryColorAsHex}\n**Hat:** ${details.hat}\n**Face:** ${details.face}\n**Head:** ${details.head}\n**Grapple:** ${details.grapple}\n**Hands:** ${details.hands}\n**Checkpoint:** ${details.checkpoint}\n**Neck:** ${details.neck}`,
+                                "color": parseInt(primaryColorAsHex, 16),
+                                "fields": [],
+                                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
+                            }],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                } else {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a player with that username",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+            } else if(command == "random") {
+                const isVerified = json.data.options[0].value;
+                const levelUrl = "https://api.slin.dev/grab/v1/get_random_level";
+                if (isVerified) {levelUrl += "?type=ok"}
+                const levelResponse = await fetch(levelUrl);
+                const levelData = await levelResponse.json();
+                const url = `https://grabvr.quest/levels/viewer?level=${levelData.identifier}`;
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: url,
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             }
         }
 

@@ -40,6 +40,18 @@ export const commands = [
         ]
     },
     {
+        name: "whois",
+        description: "Get a players cosmetic details and role",
+        options: [
+            {
+                name: "username",
+                description: "Player username",
+                required: true,
+                type: 3
+            }
+        ]
+    },
+    {
         name: "random",
         description: "Get a random level",
         options: [
