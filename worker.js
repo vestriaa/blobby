@@ -417,17 +417,18 @@ export default {
                         }
                         if (player.active_customizations.items) {
                             const items = player.active_customizations.items;
-                            if (items["head/glasses"]) {details.face = items["head/glasses"].replace("head_glasses_", "").replaceAll("_", " ")}
-                            if (items["grapple/hook"]) {details.grapple = items["grapple/hook"].replace("grapple_hook_", "").replaceAll("_", " ")}
-                            if (items["head/hat"]) {details.hat = items["head/hat"].replace("head_hat_", "").replaceAll("_", " ")}
-                            if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("checkpoint_", "").replaceAll("_", " ")}
-                            if (items["head"]) {details.head = items["head"].replace("head_", "").replaceAll("_", " ")}
-                            if (items["hand"]) {details.hands = items["hand"].replace("hand_", "").replaceAll("_", " ")}
-                            if (items["body/neck"]) {details.neck = items["body/neck"].replace("body_neck_", "").replaceAll("_", " ")}
+                            if (items["head/glasses"]) {details.face = items["head/glasses"].replace("_basic", "").replace("head_glasses_", "").replaceAll("_", " ")}
+                            if (items["grapple/hook"]) {details.grapple = items["grapple/hook"].replace("_basic", "").replace("grapple_hook_", "").replaceAll("_", " ")}
+                            if (items["head/hat"]) {details.hat = items["head/hat"].replace("_basic", "").replace("head_hat_", "").replaceAll("_", " ")}
+                            if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("_basic", "").replace("checkpoint_", "").replaceAll("_", " ")}
+                            if (items["head"]) {details.head = items["head"].replace("_basic", "").replace("head_", "").replaceAll("_", " ")}
+                            if (items["hand"]) {details.hands = items["hand"].replace("_basic", "").replace("hand_", "").replaceAll("_", " ")}
+                            if (items["body/neck"]) {details.neck = items["body/neck"].replace("_basic", "").replace("body_neck_", "").replaceAll("_", " ")}
                         }
                     }
-                    const primaryColorAsHex = `${(details.primary[0] * 255).toString(16).padStart(2, '0')}${(details.primary[1] * 255).toString(16).padStart(2, '0')}${(details.primary[2] * 255).toString(16).padStart(2, '0')}`;
-                    const secondaryColorAsHex = `${(details.secondary[0] * 255).toString(16).padStart(2, '0')}${(details.secondary[1] * 255).toString(16).padStart(2, '0')}${(details.secondary[2] * 255).toString(16).padStart(2, '0')}`;
+                    const primaryColorAsHex = `${(Math.round(details.primary[0] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.primary[1] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.primary[2] * 255)).toString(16).padStart(2, '0')}`;
+                    const secondaryColorAsHex = `${(Math.round(details.secondary[0] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.secondary[1] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.secondary[2] * 255)).toString(16).padStart(2, '0')}`;
+                    const roles = [details.moderator, details.creator, details.verifier].map((role, index) => role ? ["Moderator", "Creator", "Verifier"][index] : null).filter(role => role !== null);
                     return Response.json({
                         type: 4,
                         data: {
@@ -439,7 +440,10 @@ export default {
                                 "description": `**Primary:** #${primaryColorAsHex}\n**Secondary:** #${secondaryColorAsHex}\n**Hat:** ${details.hat}\n**Face:** ${details.face}\n**Head:** ${details.head}\n**Grapple:** ${details.grapple}\n**Hands:** ${details.hands}\n**Checkpoint:** ${details.checkpoint}\n**Neck:** ${details.neck}`,
                                 "color": parseInt(primaryColorAsHex, 16),
                                 "fields": [],
-                                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
+                                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`,
+                                "footer": {
+                                    "text": roles.join(" | ")
+                                }
                             }],
                             allowed_mentions: { parse: [] }
                         }
