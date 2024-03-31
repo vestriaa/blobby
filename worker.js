@@ -335,7 +335,7 @@ export default {
                     const timeString = joinDate.toLocaleString('en-US', { timeZone: "UTC" });
 
                     for (let level of levelData) {
-                        if (item?.tags?.includes("ok")) {
+                        if (level?.tags?.includes("ok")) {
                             statistics.verified_maps += 1;
                             statistics.verified_plays += level.statistics.total_played;
                         }
