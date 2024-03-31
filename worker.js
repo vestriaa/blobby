@@ -22,6 +22,11 @@ export default {
         }
     },
 
+    colorComponentToHex(component) {
+        const hex = Math.round(component * 255).toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    },
+
     numberWithCommas(x) {
         let parts = x.toString().split(".");
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -426,8 +431,8 @@ export default {
                             if (items["body/neck"]) {details.neck = items["body/neck"].replace("_basic", "").replace("body_neck_", "").replaceAll("_", " ")}
                         }
                     }
-                    const primaryColorAsHex = `${(Math.round(details.primary[0] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.primary[1] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.primary[2] * 255)).toString(16).padStart(2, '0')}`;
-                    const secondaryColorAsHex = `${(Math.round(details.secondary[0] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.secondary[1] * 255)).toString(16).padStart(2, '0')}${(Math.round(details.secondary[2] * 255)).toString(16).padStart(2, '0')}`;
+                    const primaryColorAsHex = `${colorComponentToHex(details.primary[0])}${colorComponentToHex(details.primary[1])}${colorComponentToHex(details.primary[2])}`;
+                    const secondaryColorAsHex = `${colorComponentToHex(details.secondary[0])}${colorComponentToHex(details.secondary[1])}${colorComponentToHex(details.secondary[2])}`;
                     const roles = [details.moderator, details.creator, details.verifier].map((role, index) => role ? ["Moderator", "Creator", "Verifier"][index] : null).filter(role => role !== null);
                     return Response.json({
                         type: 4,
