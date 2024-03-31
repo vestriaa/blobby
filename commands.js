@@ -80,22 +80,28 @@ export const commands = [
                 type: 3,
                 choices: [
                     {
-                        name: "list"
+                        name: "list",
+                        value: "list"
                     },
                     {
-                        name: "top"
+                        name: "top",
+                        value: "top"
                     },
                     {
-                        name: "add"
+                        name: "add",
+                        value: "add"
                     },
                     {
-                        name: "remove"
+                        name: "remove",
+                        value: "remove"
                     },
                     {
-                        name: "promote"
+                        name: "promote",
+                        value: "promote"
                     },
                     {
-                        name: "demote"
+                        name: "demote",
+                        value: "demote"
                     }
                 ]
             },
