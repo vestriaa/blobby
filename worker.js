@@ -481,6 +481,7 @@ export default {
                 const func = json.data.options[0].value;
                 if (func == "list") {
                     let list = await env.NAMESPACE.get("list");
+                    console.log(list);
                     if (list) {
                         return Response.json({
                             type: 4,
