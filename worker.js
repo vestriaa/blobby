@@ -355,10 +355,7 @@ export default {
                     statistics.average_time /= statistics.maps;
                     statistics.average_plays = statistics.plays / statistics.maps;
 
-                    const r = primaryColor[0] * 255;
-                    const g = primaryColor[1] * 255;
-                    const b = primaryColor[2] * 255;
-                    const primaryColorAsHex = `${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+                    const primaryColorAsHex = `${this.colorComponentToHex(primaryColor[0])}${this.colorComponentToHex(primaryColor[1])}${this.colorComponentToHex(primaryColor[2])}`;
 
                     return Response.json({
                         type: 4,
