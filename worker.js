@@ -481,14 +481,24 @@ export default {
                 const func = json.data.options[0].value;
                 if (func == "list") {
                     let list = await env.NAMESPACE.get("list");
-                    console.log(list);
                     if (list) {
+                        const listData = JSON.parse(list);
+                        const description = [];
+                        for (let i = 0; i < 10; i++) {
+                            const item = listData[i];
+                            description.push("**" + i+1 + "**. " + item.title);
+                        }
+                        const embeds = [{
+                            title: "Hardest Maps List",
+                            description: description.join("\n"),
+                            color: 0xff0000
+                        }];
                         return Response.json({
                             type: 4,
                             data: {
                                 tts: false,
-                                content: list,
-                                embeds: [],
+                                content: "",
+                                embeds: embeds,
                                 allowed_mentions: { parse: [] }
                             }
                         });
