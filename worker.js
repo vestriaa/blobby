@@ -28,6 +28,14 @@ export default {
         return parts.join(".");
     },
 
+    formatTime(seconds) {
+        let minutes = Math.floor(seconds / 60);
+        let seconds = (seconds % 60).toFixed(maxDecimals);
+        if (minutes < 10) { minutes = "0" + minutes; }
+        if (seconds < 10) { seconds = "0" + seconds; }
+        return `${minutes}:${seconds}`;
+    },
+
     async fetch(request, env, ctx) {
 
         const signature = request.headers.get("x-signature-ed25519");
@@ -102,7 +110,7 @@ export default {
             } else if (command == "actualtrending") {
                 const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
                 const levelData = await levelResponse.json();
-                const top5 = levelData.filter((level) => level.identifier !== "29t798uon2urbra1f8w2q:1693775768" && level.title.indexOf("yoohoo") == -1 && level.title.indexOf("diff") == -1).slice(0, 5);
+                const top5 = levelData.filter((level) => level.identifier !== "29t798uon2urbra1f8w2q:1693775768" && level.title.toLowerCase().indexOf("yoohoo") == -1 && level.title.toLowerCase().indexOf("diff") == -1).slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
                     description.push(`**#${index + 1}** ${level.title} - ${level.change}`);
@@ -233,7 +241,60 @@ export default {
                     }
                 });
             } else if (command == "leaderboard") {
-                console.log(json);
+                const queryTitle = json.data.options[0].value;
+                const queryCreator = json.data.options[1].value;
+                const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=search&search_term=${queryTitle}`;
+                const levelResponse = await fetch(levelSearch);
+                const levelData = await levelResponse.json();
+                const foundLevels = []
+                for(const level of levelData) {
+                    if("creators" in level) {
+                        for(const creator of level.creators) {
+                            if(creator.toLowerCase().includes(queryCreator.toLowerCase())) {
+                                foundLevels.push(level);
+                                break;
+                            }
+                        }
+                    }
+                }
+                foundLevels.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))
+                if(foundLevels.length >= 1) {
+                    const levelID = foundLevels[0].identifier;
+                    const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
+                    const leaderboardResponse = await fetch(leaderboardUrl);
+                    const leaderboardData = await leaderboardResponse.json();
+                    let description = [];
+                    for(let i = 0; i < Math.min(10, leaderboardData.length); i++) {
+                        description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${this.formatTime(leaderboardData[i].best_time)}`);
+                    }
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "",
+                            embeds: [{
+                                "type": "rich",
+                                "title": `Leaderboard for ${foundLevels[0].title}`,
+                                "description": description.join("\n"),
+                                "color": 0x618dc3,
+                                "fields": [],
+                                "url": `https://grabvr.quest/levels/viewer/?level=${levelID}`
+                            }],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+                else{
+                    return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "Could not find a level with that title and creator",
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+                }
             }
         }
 
