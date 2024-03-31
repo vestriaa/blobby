@@ -33,6 +33,7 @@ export const commands = [
         options: [
             {
                 name: "username",
+                description: "Player unsername",
                 required: true,
                 type: 3
             }
@@ -44,6 +45,7 @@ export const commands = [
         options: [
             {
                 name: "verified",
+                description: "Only return verified levels",
                 required: true,
                 type: 5
             }
@@ -55,11 +57,13 @@ export const commands = [
         options: [
             {
                 name: "title",
+                description: "Title of the level",
                 required: true,
                 type: 3
             },
             {
                 name: "creator",
+                description: "The level creators username",
                 required: true,
                 type: 3
             }
@@ -71,6 +75,7 @@ export const commands = [
         options: [
             {
                 name: "command",
+                description: "The command to run",
                 required: true,
                 type: 3,
                 choices: [
@@ -96,6 +101,7 @@ export const commands = [
             },
             {
                 name: "link",
+                deacription: "Link to the level",
                 required: false,
                 type: 3
             }
