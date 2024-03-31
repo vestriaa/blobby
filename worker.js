@@ -477,6 +477,23 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "hardest") {
+                const func = json.data.options[0].value;
+                if (func == "list") {
+                    let list = await env.NAMESPACE.get("list");
+                    if (list) {
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: list,
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
+                }
+                return new Response("invalid command", {status: 400});
             }
         }
 
