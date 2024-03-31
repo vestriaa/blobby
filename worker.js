@@ -321,7 +321,6 @@ export default {
                         "verified_plays": 0,
                         "maps": 0,
                         "verified_maps": 0,
-                        "todays_plays": 0,
                         "average_difficulty": 0,
                         "average_plays": 0,
                         "average_likes": 0,
@@ -341,10 +340,9 @@ export default {
                         }
                         statistics.plays += level.statistics.total_played;
                         statistics.maps += 1;
-                        statistics.todays_plays += level.change || 0;
                         statistics.average_difficulty += level.statistics.difficulty;
-                        statistics.average_likes += level.statistics.liked;
-                        statistics.average_time += level.statistics.time;
+                        statistics.average_likes += level?.statistics?.liked || 0;
+                        statistics.average_time += level?.statistics?.time || 0;
                         statistics.complexity += level.complexity;
                     }
                     statistics.average_difficulty /= statistics.maps;
@@ -365,7 +363,7 @@ export default {
                             embeds: [{
                                 "type": "rich",
                                 "title": `${userName}'s stats`,
-                                "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** ${timeString}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Total maps:** ${this.numberWithCommas(statistics.maps)}\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Todays plays:** ${this.numberWithCommas(statistics.todays_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
+                                "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** ${timeString}\n**Total maps:** ${this.numberWithCommas(statistics.maps)}\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
                                 "color": parseInt(primaryColorAsHex, 16),
                                 "fields": [],
                                 "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
