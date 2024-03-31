@@ -32,7 +32,7 @@ export const commands = [
         description: "Get a players details and stats",
         options: [
             {
-                name: “user_name”,
+                name: "username",
                 required: true,
                 type: 3
             }
@@ -43,7 +43,7 @@ export const commands = [
         description: "Get a random level",
         options: [
             {
-                name: “verified”,
+                name: "verified",
                 required: true,
                 type: 5
             }
@@ -54,16 +54,15 @@ export const commands = [
         description: "Get a levels leaderboard",
         options: [
             {
-                name: “title”,
+                name: "title",
                 required: true,
                 type: 3
             },
             {
-                name: “creator”,
+                name: "creator",
                 required: true,
                 type: 3
             }
-    
         ]
     },
     {
@@ -71,32 +70,32 @@ export const commands = [
         description: "Hardest maps list functionality",
         options: [
             {
-                name: “command”,
+                name: "command",
                 required: true,
                 type: 3,
                 choices: [
                     {
-                        name: “list”
+                        name: "list"
                     },
                     {
-                        name: “top”
+                        name: "top"
                     },
                     {
-                        name: “add”
+                        name: "add"
                     },
                     {
-                        name: “remove”
+                        name: "remove"
                     },
                     {
-                        name: “promote”
+                        name: "promote"
                     },
                     {
-                        name: “demote”
+                        name: "demote"
                     }
                 ]
             },
             {
-                name: “link”,
+                name: "link",
                 required: false,
                 type: 3
             }
