@@ -301,6 +301,89 @@ export default {
                     }
                 });
                 }
+            } else if (command == "player") {
+                const queryUsername = json.data.options[0].value;
+                const searchUrl = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryUsername}`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                if(searchData.length >= 1) {
+                    const userID = searchData[0].user_id;
+                    const userName = searchData[0].user_name;
+                    const levelCount = searchData[0].user_evel_count;
+                    const primaryColor = searchData[0]?.active_customizations?.player_color_primary?.color;
+                    
+                    const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userID}`;
+                    const levelResponse = await fetch(levelSearch);
+                    const levelData = await levelResponse.json();
+
+                    let statistics = {
+                        "plays": 0,
+                        "verified_plays": 0,
+                        "maps": 0,
+                        "verified_maps": 0,
+                        "todays_plays": 0,
+                        "average_difficulty": 0,
+                        "average_plays": 0,
+                        "average_likes": 0,
+                        "average_time": 0,
+                        "complexity": 0,
+                    }
+                    let userIDInt = [...userID.toString()].reduce((r,v) => r * BigInt(36) + BigInt(parseInt(v,36)), 0n);
+                    userIDInt >>= BigInt(32);
+                    userIDInt >>= BigInt(32);
+                    const joinDate = new Date(Number(userIDInt));
+                    const timeString = joinDate.toLocaleString('en-US', { timeZone: "UTC" });
+
+                    for (let level of levelData) {
+                        if (item?.tags?.includes("ok")) {
+                            statistics.verified_maps += 1;
+                            statistics.verified_plays += level.statistics.total_played;
+                        }
+                        statistics.plays += level.statistics.total_played;
+                        statistics.maps += 1;
+                        statistics.todays_plays += level.change || 0;
+                        statistics.average_difficulty += level.statistics.difficulty;
+                        statistics.average_likes += level.statistics.liked;
+                        statistics.average_time += level.statistics.time;
+                        statistics.complexity += level.complexity;
+                    }
+                    statistics.average_difficulty /= statistics.maps;
+                    statistics.average_likes /= statistics.maps;
+                    statistics.average_time /= statistics.maps;
+                    statistics.average_plays = statistics.plays / statistics.maps;
+
+                    const r = primaryColor[0] * 255;
+                    const g = primaryColor[1] * 255;
+                    const b = primaryColor[2] * 255;
+                    const primaryColorAsHex = `${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "",
+                            embeds: [{
+                                "type": "rich",
+                                "title": `${userName}'s stats`,
+                                "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** ${timeString}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Total maps:** ${this.numberWithCommas(statistics.maps)}\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Todays plays:** ${this.numberWithCommas(statistics.todays_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
+                                "color": parseInt(primaryColorAsHex, 16),
+                                "fields": [],
+                                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
+                            }],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                } else {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a player with that username",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
             }
         }
 
