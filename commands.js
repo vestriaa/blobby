@@ -33,7 +33,7 @@ export const commands = [
         options: [
             {
                 name: "username",
-                description: "Player unsername",
+                description: "Player username",
                 required: true,
                 type: 3
             }

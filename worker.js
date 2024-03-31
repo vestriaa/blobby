@@ -99,6 +99,28 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "actualtrending") {
+                const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
+                const levelData = await levelResponse.json();
+                const top5 = levelData.filter((level) => level.identifier !== "29t798uon2urbra1f8w2q:1693775768" && level.title.indexOf("yoohoo") == -1 && level.title.indexOf("diff") == -1).slice(0, 5);
+                let description = [];
+                top5.forEach((level, index) => {
+                    description.push(`**#${index + 1}** ${level.title} - ${level.change}`);
+                });
+                const embeds = [{
+                    title: `Trending Levels`,
+                    description: description.join("\n"),
+                    color: 0x00ffff
+                }];
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: embeds,
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             } else if (command == "toptrending") {
                 const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
                 const levelData = await levelResponse.json();
@@ -210,6 +232,8 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "leaderboard") {
+                console.log(json);
             }
         }
 
