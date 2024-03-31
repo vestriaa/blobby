@@ -309,7 +309,7 @@ export default {
                 if(searchData.length >= 1) {
                     const userID = searchData[0].user_id;
                     const userName = searchData[0].user_name;
-                    const levelCount = searchData[0].user_evel_count;
+                    const levelCount = searchData[0].user_level_count;
                     const primaryColor = searchData[0]?.active_customizations?.player_color_primary?.color;
                     
                     const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userID}`;
