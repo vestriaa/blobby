@@ -341,9 +341,9 @@ export default {
                     for (let level of levelData) {
                         if (level?.tags?.includes("ok")) {
                             statistics.verified_maps += 1;
-                            statistics.verified_plays += level.statistics.total_played;
+                            statistics.verified_plays += level?.statistics?.total_played || 0;
                         }
-                        statistics.plays += level.statistics.total_played;
+                        statistics.plays += level?.statistics?.total_played || 0;
                         statistics.maps += 1;
                         statistics.average_difficulty += level.statistics.difficulty;
                         statistics.average_likes += level?.statistics?.liked || 0;
@@ -486,7 +486,7 @@ export default {
                         const description = [];
                         for (let i = 0; i < 10; i++) {
                             const item = listData[i];
-                            description.push("**" + i+1 + "**. " + item.title);
+                            description.push(`**${i+1}**. ${item.title}`);
                         }
                         const embeds = [{
                             title: "Hardest Maps List",
