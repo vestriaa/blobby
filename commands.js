@@ -114,6 +114,10 @@ export const commands = [
                     {
                         name: "demote",
                         value: "demote"
+                    },
+                    {
+                        name: "move",
+                        value: "move"
                     }
                 ]
             },
@@ -122,6 +126,12 @@ export const commands = [
                 description: "Link to the level",
                 required: false,
                 type: 3
+            },
+            {
+                name: "position",
+                description: "Position to move level for 'move' command",
+                required: false,
+                type: 4
             }
         ]
     }

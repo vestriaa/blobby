@@ -507,8 +507,111 @@ export default {
                             }
                         });
                     }
+                } else if (func == "top") {
+                    let list = await env.NAMESPACE.get("list");
+                    if (list) {
+                        const listData = JSON.parse(list);
+                        const level = listData[0];
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: "",
+                                embeds: [{
+                                    title: "Hardest Level",
+                                    description: `${level.title} by ${level.creator}`,
+                                    url: `https://grabvr.quest/levels/viewer/?level=${level.id || ""}`,
+                                    color: 0xff0000
+                                }],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
+                } else if (func == "add") {
+                    let list = await env.NAMESPACE.get("list");
+                    if (list) {
+                        let listData = JSON.parse(list);
+                        const levelLink = json.data.options[1].value;
+                        const levelId = levelLink.split("level=")[1];
+                        const levelUrl = `https://api.slin.dev/grab/v1/level/${levelId}`;
+                        const levelResponse = await fetch(levelUrl);
+                        const levelData = await levelResponse.json();
+                        const listItem = {
+                            "title": levelData.title,
+                            "id": levelId,
+                            "creator": levelData.creators.length > 0 ? levelData.creators[0] : "",
+                        };
+                        listData.push(listItem);
+                        await env.NAMESPACE.put("list", JSON.stringify(listData));
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: `Added ${levelData.title} to list`,
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
+                } else if (func == "remove") {
+                    let list = await env.NAMESPACE.get("list");
+                    if (list) {
+                        let listData = JSON.parse(list);
+                        const levelLink = json.data.options[1].value;
+                        const levelId = levelLink.split("?level=")[1];
+                        const index = listData.findIndex(item => item.id == levelId);
+                        if (index > -1) {
+                            listData.splice(index, 1);
+                            await env.NAMESPACE.put("list", JSON.stringify(listData));
+                            return Response.json({
+                                type: 4,
+                                data: {
+                                    tts: false,
+                                    content: `Removed ${listData[index].title} from list`,
+                                    embeds: [],
+                                    allowed_mentions: { parse: [] }
+                                }
+                            });
+                        }
+                    }
+                } else if (func == "move") {
+                    let list = await env.NAMESPACE.get("list");
+                    if (list) {
+                        let listData = JSON.parse(list);
+                        const levelLink = json.data.options[1].value;
+                        const newIndex = json.data.options[2].value - 1;
+                        const levelId = levelLink.split("?level=")[1];
+                        const oldIndex = listData.findIndex(item => item.id == levelId);
+                        if (oldIndex > -1) {
+                            const oldItem = {
+                                "title": listData[oldIndex].title,
+                                "id": listData[oldIndex].id,
+                                "creator": listData[oldIndex].creator,
+                            }
+                            listData.splice(oldIndex, 1);
+                            listData.splice(newIndex - 1, 0, oldItem);
+                            await env.NAMESPACE.put("list", JSON.stringify(listData));
+                            return Response.json({
+                                type: 4,
+                                data: {
+                                    tts: false,
+                                    content: `Moved ${oldItem.title} from ${oldIndex + 1} to ${newIndex + 1}`,
+                                    embeds: [],
+                                    allowed_mentions: { parse: [] }
+                                }
+                            });
+                        }
+                    }
                 }
-                return new Response("invalid command", {status: 400});
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "invalid command",
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             }
         }
 
