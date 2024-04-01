@@ -531,8 +531,8 @@ export default {
                 } else if (func == "add") {
                     let canEditHardest = false;
                     if (json?.member?.roles) {
-                        json.members.roles.forEach(role => {
-                            if (role.id == hardestRoleId) {
+                        json.member.roles.forEach(role => {
+                            if (role == hardestRoleId) {
                                 canEditHardest = true;
                             }
                         });
@@ -576,8 +576,8 @@ export default {
                 } else if (func == "remove") {
                     let canEditHardest = false;
                     if (json?.member?.roles) {
-                        json.members.roles.forEach(role => {
-                            if (role.id == hardestRoleId) {
+                        json.member.roles.forEach(role => {
+                            if (role == hardestRoleId) {
                                 canEditHardest = true;
                             }
                         });
@@ -616,8 +616,8 @@ export default {
                 } else if (func == "move") {
                     let canEditHardest = false;
                     if (json?.member?.roles) {
-                        json.members.roles.forEach(role => {
-                            if (role.id == hardestRoleId) {
+                        json.member.roles.forEach(role => {
+                            if (role == hardestRoleId) {
                                 canEditHardest = true;
                             }
                         });
