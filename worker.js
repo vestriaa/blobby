@@ -637,7 +637,7 @@ export default {
                     if (list) {
                         let listData = JSON.parse(list);
                         const levelLink = json.data.options[1].value;
-                        const newIndex = json.data.options[2].value - 1;
+                        const newIndex = json.data.options[2].value;
                         const levelId = levelLink.split("?level=")[1];
                         const oldIndex = listData.findIndex(item => item.id == levelId);
                         if (oldIndex > -1) {
