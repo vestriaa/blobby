@@ -553,7 +553,7 @@ export default {
                         let listData = JSON.parse(list);
                         const levelLink = json.data.options[1].value;
                         const levelId = levelLink.split("level=")[1];
-                        const levelUrl = `https://api.slin.dev/grab/v1/level/${levelId}`;
+                        const levelUrl = `https://api.slin.dev/grab/v1/level/${levelId.replace(":", "/")}`;
                         const levelResponse = await fetch(levelUrl);
                         const levelData = await levelResponse.json();
                         const listItem = {
