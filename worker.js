@@ -64,6 +64,7 @@ export default {
         }
 
         if (json.type == 2) {
+            const hardestRoleId = "1224307852248612986";
             const command = json.data.name;
             if (command == "unbeaten") {
                 const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
@@ -528,6 +529,25 @@ export default {
                         });
                     }
                 } else if (func == "add") {
+                    let canEditHardest = false;
+                    if (json?.member?.roles) {
+                        json.members.roles.forEach(role => {
+                            if (role.id == hardestRoleId) {
+                                canEditHardest = true;
+                            }
+                        });
+                    }
+                    if (!canEditHardest) {
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: `You don't have permission to do that`,
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
                     let list = await env.NAMESPACE.get("list");
                     if (list) {
                         let listData = JSON.parse(list);
@@ -554,6 +574,25 @@ export default {
                         });
                     }
                 } else if (func == "remove") {
+                    let canEditHardest = false;
+                    if (json?.member?.roles) {
+                        json.members.roles.forEach(role => {
+                            if (role.id == hardestRoleId) {
+                                canEditHardest = true;
+                            }
+                        });
+                    }
+                    if (!canEditHardest) {
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: `You don't have permission to do that`,
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
                     let list = await env.NAMESPACE.get("list");
                     if (list) {
                         let listData = JSON.parse(list);
@@ -575,6 +614,25 @@ export default {
                         }
                     }
                 } else if (func == "move") {
+                    let canEditHardest = false;
+                    if (json?.member?.roles) {
+                        json.members.roles.forEach(role => {
+                            if (role.id == hardestRoleId) {
+                                canEditHardest = true;
+                            }
+                        });
+                    }
+                    if (!canEditHardest) {
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: `You don't have permission to do that`,
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
                     let list = await env.NAMESPACE.get("list");
                     if (list) {
                         let listData = JSON.parse(list);

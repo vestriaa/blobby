@@ -108,14 +108,6 @@ export const commands = [
                         value: "remove"
                     },
                     {
-                        name: "promote",
-                        value: "promote"
-                    },
-                    {
-                        name: "demote",
-                        value: "demote"
-                    },
-                    {
                         name: "move",
                         value: "move"
                     }
