@@ -653,7 +653,7 @@ export default {
                                 type: 4,
                                 data: {
                                     tts: false,
-                                    content: `Moved ${oldItem.title} from ${oldIndex + 1} to ${newIndex + 1}`,
+                                    content: `Moved ${oldItem.title} from ${oldIndex + 1} to ${newIndex}`,
                                     embeds: [],
                                     allowed_mentions: { parse: [] }
                                 }
