@@ -601,6 +601,25 @@ export default {
                             }
                         });
                     }
+                } else if (func == "listall") {
+                    let list = await env.NAMESPACE.get("list");
+                    if (list) {
+                        const listData = JSON.parse(list);
+                        const description = [];
+                        for (let i = 0; i < listData.length; i++) {
+                            const item = listData[i];
+                            description.push(`${i+1} ${item.title}`);
+                        }
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: description.join("\n"),
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
                 } else if (func == "top") {
                     let list = await env.NAMESPACE.get("list");
                     if (list) {

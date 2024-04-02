@@ -134,6 +134,10 @@ export const commands = [
                     {
                         name: "move",
                         value: "move"
+                    },
+                    {
+                        name: "listall",
+                        value: "listall"
                     }
                 ]
             },
