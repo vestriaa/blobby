@@ -482,6 +482,99 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "newest") {
+                let levelSearch;
+                if (json?.data?.options[0]?.value) {
+                    const queryCreator = json.data.options[0].value;
+                    const userSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
+                    const searchResponse = await fetch(userSearch);
+                    const searchData = await searchResponse.json();
+                    if(searchData.length >= 1) {
+                        const user = searchData[0];
+                        const userId = user.user_id;
+                        levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userId}`;
+                    } else {
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: "Could not find a creator with that username",
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
+                } else {
+                    levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9`;
+                }
+                const levelResponse = await fetch(levelSearch);
+                const levelData = await levelResponse.json();
+                if (levelData.length >= 1) {
+                    const level = levelData[0];
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "",
+                            embeds: [await this.generateLevelEmbed(level)],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                } else {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a level for that creator",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+            } else if (command == "oldest") {
+                const queryCreator = json.data.options[0].value;
+                const userSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
+                const searchResponse = await fetch(userSearch);
+                const searchData = await searchResponse.json();
+                if(searchData.length >= 1) {
+                    const user = searchData[0];
+                    const userId = user.user_id;
+                    const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userId}`;
+                    const levelResponse = await fetch(levelSearch);
+                    const levelData = await levelResponse.json();
+                    if (levelData.length >= 1) {
+                        const level = levelData[levelData.length - 1];
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: "",
+                                embeds: [await this.generateLevelEmbed(level)],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    } else {
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: "Could not find a level for that creator",
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
+                    }
+                } else {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a creator with that username",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
             } else if (command == "hardest") {
                 const func = json.data.options[0].value;
                 if (func == "list") {

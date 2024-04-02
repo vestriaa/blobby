@@ -64,6 +64,30 @@ export const commands = [
         ]
     },
     {
+        name: "newest",
+        description: "Get the newest level globally or by creator",
+        options: [
+            {
+                name: "creator",
+                description: "creators username",
+                required: false,
+                type: 3
+            }
+        ]
+    },
+    {
+        name: "oldest",
+        description: "Get the oldest level of a creator",
+        options: [
+            {
+                name: "creator",
+                description: "creators username",
+                required: true,
+                type: 3
+            }
+        ]
+    },
+    {
         name: "leaderboard",
         description: "Get a levels leaderboard",
         options: [
