@@ -515,8 +515,8 @@ export default {
                         type: 4,
                         data: {
                             tts: false,
-                            content: "",
-                            embeds: [await this.generateLevelEmbed(level)],
+                            content: `https://grabvr.quest/levels/viewer/?level=${level.identifier}`,
+                            embeds: [],
                             allowed_mentions: { parse: [] }
                         }
                     });
@@ -548,8 +548,8 @@ export default {
                             type: 4,
                             data: {
                                 tts: false,
-                                content: "",
-                                embeds: [await this.generateLevelEmbed(level)],
+                                content: `https://grabvr.quest/levels/viewer/?level=${level.identifier}`,
+                                embeds: [],
                                 allowed_mentions: { parse: [] }
                             }
                         });
