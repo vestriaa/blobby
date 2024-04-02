@@ -713,22 +713,19 @@ export default {
                     let list = await env.NAMESPACE.get("list");
                     if (list) {
                         let listData = JSON.parse(list);
-                        const levelLink = json.data.options[1].value;
-                        const levelId = levelLink.split("?level=")[1];
-                        const index = listData.findIndex(item => item.id == levelId);
-                        if (index > -1) {
-                            listData.splice(index, 1);
-                            await env.NAMESPACE.put("list", JSON.stringify(listData));
-                            return Response.json({
-                                type: 4,
-                                data: {
-                                    tts: false,
-                                    content: `Removed ${listData[index].title} from list`,
-                                    embeds: [],
-                                    allowed_mentions: { parse: [] }
-                                }
-                            });
-                        }
+                        const levelPosition = json.data.options[1].value;
+                        const index = levelPosition - 1;
+                        listData.splice(index, 1);
+                        await env.NAMESPACE.put("list", JSON.stringify(listData));
+                        return Response.json({
+                            type: 4,
+                            data: {
+                                tts: false,
+                                content: `Removed ${listData[index].title} from list`,
+                                embeds: [],
+                                allowed_mentions: { parse: [] }
+                            }
+                        });
                     }
                 } else if (func == "move") {
                     let canEditHardest = false;
