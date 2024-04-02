@@ -635,8 +635,12 @@ export default {
                             type: 4,
                             data: {
                                 tts: false,
-                                content: description.join("\n"),
-                                embeds: [],
+                                content: "",
+                                embeds: [{
+                                    title: "Hardest Maps List",
+                                    description: description.join("\n"),
+                                    color: 0xff0000
+                                }],
                                 allowed_mentions: { parse: [] }
                             }
                         });
