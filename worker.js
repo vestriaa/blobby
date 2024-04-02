@@ -715,13 +715,14 @@ export default {
                         let listData = JSON.parse(list);
                         const levelPosition = json.data.options[1].value;
                         const index = levelPosition - 1;
+                        const title = listData[index].title;
                         listData.splice(index, 1);
                         await env.NAMESPACE.put("list", JSON.stringify(listData));
                         return Response.json({
                             type: 4,
                             data: {
                                 tts: false,
-                                content: `Removed ${listData[index].title} from list`,
+                                content: `Removed ${title} from list`,
                                 embeds: [],
                                 allowed_mentions: { parse: [] }
                             }
