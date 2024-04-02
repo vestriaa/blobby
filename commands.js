@@ -106,6 +106,18 @@ export const commands = [
         ]
     },
     {
+        name: "gethardest",
+        description: "Get the nth level on the Hardest Levels List",
+        options: [
+            {
+                name: "position",
+                description: "Position on the list (1 - 50)",
+                required: true,
+                type: 4
+            }
+        ]
+    },
+    {
         name: "hardest",
         description: "Hardest maps list functionality",
         options: [
@@ -118,10 +130,6 @@ export const commands = [
                     {
                         name: "list",
                         value: "list"
-                    },
-                    {
-                        name: "top",
-                        value: "top"
                     },
                     {
                         name: "add",
