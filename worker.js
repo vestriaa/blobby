@@ -484,7 +484,7 @@ export default {
                 });
             } else if (command == "newest") {
                 let levelSearch;
-                if (json?.data?.options[0]?.value) {
+                if (json?.data?.options && json.data.options.length > 0 && json.data.options[0]?.value) {
                     const queryCreator = json.data.options[0].value;
                     const userSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
                     const searchResponse = await fetch(userSearch);
