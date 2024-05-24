@@ -328,6 +328,7 @@ export default {
                         "plays": 0,
                         "verified_plays": 0,
                         "maps": 0,
+                        "time_maps": 0,
                         "verified_maps": 0,
                         "average_difficulty": 0,
                         "average_plays": 0,
@@ -347,17 +348,18 @@ export default {
                             statistics.verified_plays += level?.statistics?.total_played || 0;
                         }
                         if ("statistics" in level) {
-                            statistics.plays += level.statistics.total_played;
-                            statistics.average_difficulty += level.statistics.difficulty;
-                            statistics.average_likes += level.statistics.liked;
-                            statistics.average_time += level.statistics.time;
+                            statistics.plays += level?.statistics?.total_played || 0;
+                            statistics.average_difficulty += level?.statistics?.difficulty || 0;
+                            statistics.average_likes += level?.statistics?.liked || 0;
+                            statistics.average_time += level?.statistics?.time || 0;
                         }
                         statistics.maps += 1;
+                        level?.statistics?.time != undefined ? statistics.time_maps += 1 : null;
                         statistics.complexity += level.complexity;
                     }
                     statistics.average_difficulty /= statistics.maps;
                     statistics.average_likes /= statistics.maps;
-                    statistics.average_time /= statistics.maps;
+                    statistics.average_time /= statistics.time_maps;
                     statistics.average_plays = statistics.plays / statistics.maps;
 
                     const primaryColorAsHex = `${this.colorComponentToHex(primaryColor[0])}${this.colorComponentToHex(primaryColor[1])}${this.colorComponentToHex(primaryColor[2])}`;
