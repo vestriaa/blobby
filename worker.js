@@ -411,12 +411,14 @@ export default {
                         neck: "none",
                         creator: false,
                         moderator: false,
-                        verifier: false
+                        verifier: false,
+                        super_moderator: false
                     };
                     const player = searchData[0];
                     if (player.is_verifier) { details.verifier = true; }
                     if (player.is_creator) { details.creator = true; }
                     if (player.is_moderator) { details.moderator = true; }
+                    if (player.is_supermoderator || player.is_super_moderator || player.is_superModerator) { details.super_moderator = true; }
                     if (player.active_customizations) {
                         if (player.active_customizations?.player_color_primary?.color) {
                             details.primary = player.active_customizations.player_color_primary.color;
@@ -437,7 +439,7 @@ export default {
                     }
                     const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
                     const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
-                    const roles = [details.moderator, details.creator, details.verifier].map((role, index) => role ? ["Moderator", "Creator", "Verifier"][index] : null).filter(role => role !== null);
+                    const roles = [details.moderator, details.creator, details.verifier, details.super_moderator].map((role, index) => role ? ["Moderator", "Creator", "Verifier", "SuperMod"][index] : null).filter(role => role !== null);
                     return Response.json({
                         type: 4,
                         data: {
