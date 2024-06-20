@@ -456,6 +456,27 @@ export default {
                     });
                 }
                 const userID = userData.user_id;
+                if ([
+                    "2abebn7t4lq4ydl89oxje",
+                    "290oi9frh8eihrh1r5z0q",
+                    "2ba0vdij87qvy2tpcyph0",
+                    "2bhgdcb2kimyldou78r0l",
+                    "29n9hjza4lerqn38ee32h",
+                    "2ak0ysv35egakgfilswpy",
+                    "29id5ta7mb54j28tz6wfe",
+                    "29vhvl94jvlw4vp4b019y",
+                    "29sgp24f1uorbc6vq8d2k"
+                ].includes(userID)) {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Currently unavailable",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
                 const userName = userData.user_name;
                 let details = {
                     primary: [0,0,0],
