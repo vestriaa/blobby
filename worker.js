@@ -466,7 +466,8 @@ export default {
                     "29id5ta7mb54j28tz6wfe",
                     "29vhvl94jvlw4vp4b019y",
                     "29sgp24f1uorbc6vq8d2k",
-                    "29lmdv56fjch18bes1u2j"
+                    "29lmdv56fjch18bes1u2j",
+                    "2awf62f0y60gptc9cbecf"
                 ].includes(userID)) {
                     return Response.json({
                         type: 4,
