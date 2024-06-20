@@ -4,6 +4,18 @@ export const commands = [
         description: "Get the current unbeaten levels list",
     },
     {
+        name: "id",
+        description: "Get a players id",
+        options: [
+            {
+                name: "username",
+                description: "Player username",
+                required: true,
+                type: 3
+            }
+        ]
+    },
+    {
         name: "trending",
         description: "Get the current trending levels list",
     },

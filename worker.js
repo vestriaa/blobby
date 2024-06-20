@@ -41,6 +41,36 @@ export default {
         return `${minutes}:${seconds}`;
     },
 
+    async getPlayerDetails(query) {
+        const searchUrl = `https://api.slin.dev/grab/v1/list?type=user_name&search_term=${query}`;
+        const searchResponse = await fetch(searchUrl);
+        const searchData = await searchResponse.json();
+        if(searchData.length >= 1) {
+            // exact matches
+            for (let result of searchData) {
+                if (result.user_name.toLowerCase() == query.toLowerCase()) {
+                    return result;
+                }
+            }
+            // is_moderator
+            for (let result of searchData) {
+                if (result.is_moderator) {
+                    return result;
+                }
+            }
+            // is_creator
+            for (let result of searchData) {
+                if (result.is_creator) {
+                    return result;
+                }
+            }
+            // first
+            return searchData[0];
+        } else {
+            return false;
+        }
+    },
+
     async fetch(request, env, ctx) {
 
         const signature = request.headers.get("x-signature-ed25519");
@@ -309,78 +339,33 @@ export default {
                     }
                 });
                 }
+            } else if (command == "id") {
+                const queryUsername = json.data.options[0].value;
+                const userData = await this.getPlayerDetails(queryUsername);
+                if (!userData) {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a player with that username",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: userData.user_id,
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             } else if (command == "player") {
                 const queryUsername = json.data.options[0].value;
-                const searchUrl = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryUsername}`;
-                const searchResponse = await fetch(searchUrl);
-                const searchData = await searchResponse.json();
-                if(searchData.length >= 1) {
-                    const userID = searchData[0].user_id;
-                    const userName = searchData[0].user_name;
-                    const levelCount = searchData[0].user_level_count;
-                    const primaryColor = searchData[0]?.active_customizations?.player_color_primary?.color;
-                    
-                    const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userID}`;
-                    const levelResponse = await fetch(levelSearch);
-                    const levelData = await levelResponse.json();
-
-                    let statistics = {
-                        "plays": 0,
-                        "verified_plays": 0,
-                        "maps": 0,
-                        "time_maps": 0,
-                        "verified_maps": 0,
-                        "average_difficulty": 0,
-                        "average_plays": 0,
-                        "average_likes": 0,
-                        "average_time": 0,
-                        "complexity": 0,
-                    }
-                    let userIDInt = [...userID.toString()].reduce((r,v) => r * BigInt(36) + BigInt(parseInt(v,36)), 0n);
-                    userIDInt >>= BigInt(32);
-                    userIDInt >>= BigInt(32);
-                    const joinDate = new Date(Number(userIDInt));
-                    const unixTime = Math.floor(joinDate.getTime() / 1000);
-
-                    for (let level of levelData) {
-                        if (level?.tags?.includes("ok")) {
-                            statistics.verified_maps += 1;
-                            statistics.verified_plays += level?.statistics?.total_played || 0;
-                        }
-                        if ("statistics" in level) {
-                            statistics.plays += level?.statistics?.total_played || 0;
-                            statistics.average_difficulty += level?.statistics?.difficulty || 0;
-                            statistics.average_likes += level?.statistics?.liked || 0;
-                            statistics.average_time += level?.statistics?.time || 0;
-                        }
-                        statistics.maps += 1;
-                        level?.statistics?.time != undefined ? statistics.time_maps += 1 : null;
-                        statistics.complexity += level.complexity;
-                    }
-                    statistics.average_difficulty /= statistics.maps;
-                    statistics.average_likes /= statistics.maps;
-                    statistics.average_time /= statistics.time_maps;
-                    statistics.average_plays = statistics.plays / statistics.maps;
-
-                    const primaryColorAsHex = `${this.colorComponentToHex(primaryColor[0])}${this.colorComponentToHex(primaryColor[1])}${this.colorComponentToHex(primaryColor[2])}`;
-
-                    return Response.json({
-                        type: 4,
-                        data: {
-                            tts: false,
-                            content: "",
-                            embeds: [{
-                                "type": "rich",
-                                "title": `${userName}'s stats`,
-                                "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** <t:${unixTime}>\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
-                                "color": parseInt(primaryColorAsHex, 16),
-                                "fields": [],
-                                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
-                            }],
-                            allowed_mentions: { parse: [] }
-                        }
-                    });
-                } else {
+                const userData = await this.getPlayerDetails(queryUsername);
+                if (!userData) {
                     return Response.json({
                         type: 4,
                         data: {
@@ -391,75 +376,75 @@ export default {
                         }
                     });
                 }
+                const userID = userData.user_id;
+                const userName = userData.user_name;
+                const levelCount = userData.user_level_count;
+                const primaryColor = userData?.active_customizations?.player_color_primary?.color;
+                
+                const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userID}`;
+                const levelResponse = await fetch(levelSearch);
+                const levelData = await levelResponse.json();
+
+                let statistics = {
+                    "plays": 0,
+                    "verified_plays": 0,
+                    "maps": 0,
+                    "time_maps": 0,
+                    "verified_maps": 0,
+                    "average_difficulty": 0,
+                    "average_plays": 0,
+                    "average_likes": 0,
+                    "average_time": 0,
+                    "complexity": 0,
+                }
+                let userIDInt = [...userID.toString()].reduce((r,v) => r * BigInt(36) + BigInt(parseInt(v,36)), 0n);
+                userIDInt >>= BigInt(32);
+                userIDInt >>= BigInt(32);
+                const joinDate = new Date(Number(userIDInt));
+                const unixTime = Math.floor(joinDate.getTime() / 1000);
+
+                for (let level of levelData) {
+                    if (level?.tags?.includes("ok")) {
+                        statistics.verified_maps += 1;
+                        statistics.verified_plays += level?.statistics?.total_played || 0;
+                    }
+                    if ("statistics" in level) {
+                        statistics.plays += level?.statistics?.total_played || 0;
+                        statistics.average_difficulty += level?.statistics?.difficulty || 0;
+                        statistics.average_likes += level?.statistics?.liked || 0;
+                        statistics.average_time += level?.statistics?.time || 0;
+                    }
+                    statistics.maps += 1;
+                    level?.statistics?.time != undefined ? statistics.time_maps += 1 : null;
+                    statistics.complexity += level.complexity;
+                }
+                statistics.average_difficulty /= statistics.maps;
+                statistics.average_likes /= statistics.maps;
+                statistics.average_time /= statistics.time_maps;
+                statistics.average_plays = statistics.plays / statistics.maps;
+
+                const primaryColorAsHex = `${this.colorComponentToHex(primaryColor[0])}${this.colorComponentToHex(primaryColor[1])}${this.colorComponentToHex(primaryColor[2])}`;
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [{
+                            "type": "rich",
+                            "title": `${userName}'s stats`,
+                            "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** <t:${unixTime}>\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
+                            "color": parseInt(primaryColorAsHex, 16),
+                            "fields": [],
+                            "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
+                        }],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             } else if (command == "whois") {
                 const queryUsername = json.data.options[0].value;
-                const searchUrl = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryUsername}`;
-                const searchResponse = await fetch(searchUrl);
-                const searchData = await searchResponse.json();
-                if(searchData.length >= 1) {
-                    const userID = searchData[0].user_id;
-                    const userName = searchData[0].user_name;
-                    let details = {
-                        primary: [0,0,0],
-                        secondary: [0,0,0],
-                        hat: "none",
-                        face: "none",
-                        head: "default",
-                        grapple: "default",
-                        hands: "claw",
-                        checkpoint: "default",
-                        neck: "none",
-                        creator: false,
-                        moderator: false,
-                        verifier: false,
-                        super_moderator: false
-                    };
-                    const player = searchData[0];
-                    if (player.is_verifier) { details.verifier = true; }
-                    if (player.is_creator) { details.creator = true; }
-                    if (player.is_moderator) { details.moderator = true; }
-                    if (player.is_supermoderator || player.is_super_moderator || player.is_superModerator) { details.super_moderator = true; }
-                    if (player.active_customizations) {
-                        if (player.active_customizations?.player_color_primary?.color) {
-                            details.primary = player.active_customizations.player_color_primary.color;
-                        }
-                        if (player.active_customizations?.player_color_secondary?.color) {
-                            details.secondary = player.active_customizations.player_color_secondary.color;
-                        }
-                        if (player.active_customizations.items) {
-                            const items = player.active_customizations.items;
-                            if (items["head/glasses"]) {details.face = items["head/glasses"].replace("_basic", "").replace("head_glasses_", "").replaceAll("_", " ")}
-                            if (items["grapple/hook"]) {details.grapple = items["grapple/hook"].replace("_basic", "").replace("grapple_hook_", "").replaceAll("_", " ")}
-                            if (items["head/hat"]) {details.hat = items["head/hat"].replace("_basic", "").replace("head_hat_", "").replaceAll("_", " ")}
-                            if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("_basic", "").replace("checkpoint_", "").replaceAll("_", " ")}
-                            if (items["head"]) {details.head = items["head"].replace("_basic", "").replace("head_", "").replaceAll("_", " ")}
-                            if (items["hand"]) {details.hands = items["hand"].replace("_basic", "").replace("hand_", "").replaceAll("_", " ")}
-                            if (items["body/neck"]) {details.neck = items["body/neck"].replace("_basic", "").replace("body_neck_", "").replaceAll("_", " ")}
-                        }
-                    }
-                    const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
-                    const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
-                    const roles = [details.moderator, details.creator, details.verifier, details.super_moderator].map((role, index) => role ? ["Moderator", "Creator", "Verifier", "SuperMod"][index] : null).filter(role => role !== null);
-                    return Response.json({
-                        type: 4,
-                        data: {
-                            tts: false,
-                            content: "",
-                            embeds: [{
-                                "type": "rich",
-                                "title": `${userName}'s details`,
-                                "description": `**Primary:** #${primaryColorAsHex}\n**Secondary:** #${secondaryColorAsHex}\n**Hat:** ${details.hat}\n**Face:** ${details.face}\n**Head:** ${details.head}\n**Grapple:** ${details.grapple}\n**Hands:** ${details.hands}\n**Checkpoint:** ${details.checkpoint}\n**Neck:** ${details.neck}`,
-                                "color": parseInt(primaryColorAsHex, 16),
-                                "fields": [],
-                                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`,
-                                "footer": {
-                                    "text": roles.join(" | ")
-                                }
-                            }],
-                            allowed_mentions: { parse: [] }
-                        }
-                    });
-                } else {
+                const userData = await this.getPlayerDetails(queryUsername);
+                if (!userData) {
                     return Response.json({
                         type: 4,
                         data: {
@@ -470,7 +455,70 @@ export default {
                         }
                     });
                 }
-            } else if(command == "random") {
+                const userID = userData.user_id;
+                const userName = userData.user_name;
+                let details = {
+                    primary: [0,0,0],
+                    secondary: [0,0,0],
+                    hat: "none",
+                    face: "none",
+                    head: "default",
+                    grapple: "default",
+                    hands: "claw",
+                    checkpoint: "default",
+                    neck: "none",
+                    creator: false,
+                    moderator: false,
+                    verifier: false
+                };
+                const player = userData;
+                if (player.is_verifier) { details.verifier = true; }
+                if (player.is_creator) { details.creator = true; }
+                if (player.is_moderator) { details.moderator = true; }
+                if (player.active_customizations) {
+                    if (player.active_customizations?.player_color_primary?.color) {
+                        details.primary = player.active_customizations.player_color_primary.color;
+                    }
+                    if (player.active_customizations?.player_color_secondary?.color) {
+                        details.secondary = player.active_customizations.player_color_secondary.color;
+                    }
+                    if (player.active_customizations.items) {
+                        const items = player.active_customizations.items;
+                        if (items["head/glasses"]) {details.face = items["head/glasses"].replace("_basic", "").replace("head_glasses_", "").replaceAll("_", " ")}
+                        if (items["grapple/hook"]) {details.grapple = items["grapple/hook"].replace("_basic", "").replace("grapple_hook_", "").replaceAll("_", " ")}
+                        if (items["head/hat"]) {details.hat = items["head/hat"].replace("_basic", "").replace("head_hat_", "").replaceAll("_", " ")}
+                        if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("_basic", "").replace("checkpoint_", "").replaceAll("_", " ")}
+                        if (items["head"]) {details.head = items["head"].replace("_basic", "").replace("head_", "").replaceAll("_", " ")}
+                        if (items["hand"]) {details.hands = items["hand"].replace("_basic", "").replace("hand_", "").replaceAll("_", " ")}
+                        if (items["body/neck"]) {details.neck = items["body/neck"].replace("_basic", "").replace("body_neck_", "").replaceAll("_", " ")}
+                    }
+                }
+                const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
+                const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
+                const roles = [details.moderator, details.creator, details.verifier].map((role, index) => role ? ["Moderator", "Creator", "Verifier"][index] : null).filter(role => role !== null);
+                if (["29sgp24f1uorbc6vq8d2k", "2ak0ysv35egakgfilswpy"].includes(userID)) {
+                    roles.push("Soopy");
+                }
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [{
+                            "type": "rich",
+                            "title": `${userName}'s details`,
+                            "description": `**Primary:** #${primaryColorAsHex}\n**Secondary:** #${secondaryColorAsHex}\n**Hat:** ${details.hat}\n**Face:** ${details.face}\n**Head:** ${details.head}\n**Grapple:** ${details.grapple}\n**Hands:** ${details.hands}\n**Checkpoint:** ${details.checkpoint}\n**Neck:** ${details.neck}`,
+                            "color": parseInt(primaryColorAsHex, 16),
+                            "fields": [],
+                            "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`,
+                            "footer": {
+                                "text": roles.join(" | ")
+                            }
+                        }],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "random") {
                 const isVerified = json.data.options[0].value;
                 let levelUrl = "https://api.slin.dev/grab/v1/get_random_level";
                 if (isVerified) {levelUrl += "?type=ok"}
