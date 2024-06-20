@@ -357,7 +357,7 @@ export default {
                     type: 4,
                     data: {
                         tts: false,
-                        content: userData.user_id,
+                        content: "```"+userData.user_id+"```",
                         embeds: [],
                         allowed_mentions: { parse: [] }
                     }
