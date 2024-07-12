@@ -484,6 +484,17 @@ export default {
                     });
                 }
                 const userName = userData.user_name;
+                if (userName.includes("storeqa_")) {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a player with that usernamee",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
                 let details = {
                     primary: [0,0,0],
                     secondary: [0,0,0],
