@@ -442,6 +442,15 @@ export default {
                     }
                 });
             } else if (command == "whois") {
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "Currently unavailable",
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
                 const queryUsername = json.data.options[0].value;
                 const userData = await this.getPlayerDetails(queryUsername);
                 if (!userData) {
