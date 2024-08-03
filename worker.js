@@ -137,7 +137,7 @@ export default {
                     }
                 });
             } else if (command == "trending") {
-                const levelData = await getTrendingLevels();
+                const levelData = await this.getTrendingLevels();
                 const top5 = levelData.slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
@@ -158,7 +158,7 @@ export default {
                     }
                 });
             } else if (command == "actualtrending") {
-                const levelData = await getTrendingLevels();
+                const levelData = await this.getTrendingLevels();
                 const top5 = levelData.filter((level) => level.identifier !== "29t798uon2urbra1f8w2q:1693775768" && level.title.toLowerCase().indexOf("yoohoo") == -1 && level.title.toLowerCase().indexOf("diff") == -1).slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
@@ -179,7 +179,7 @@ export default {
                     }
                 });
             } else if (command == "toptrending") {
-                const levelData = await getTrendingLevels();
+                const levelData = await this.getTrendingLevels();
                 const level = levelData[0];
                 const fields = [
                     {
