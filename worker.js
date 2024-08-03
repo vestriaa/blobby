@@ -77,6 +77,15 @@ export default {
         }
     },
 
+    async getTrendingLevels() {
+        const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
+        const data = await response.json();
+        const trending = [data]
+        .sort((a, b) => b.change - a.change)
+        .slice(0, 200);
+        return trending;
+    },
+
     async fetch(request, env, ctx) {
 
         const signature = request.headers.get("x-signature-ed25519");
@@ -128,8 +137,7 @@ export default {
                     }
                 });
             } else if (command == "trending") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
-                const levelData = await levelResponse.json();
+                const levelData = await getTrendingLevels();
                 const top5 = levelData.slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
@@ -150,8 +158,7 @@ export default {
                     }
                 });
             } else if (command == "actualtrending") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
-                const levelData = await levelResponse.json();
+                const levelData = await getTrendingLevels();
                 const top5 = levelData.filter((level) => level.identifier !== "29t798uon2urbra1f8w2q:1693775768" && level.title.toLowerCase().indexOf("yoohoo") == -1 && level.title.toLowerCase().indexOf("diff") == -1).slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
@@ -172,8 +179,7 @@ export default {
                     }
                 });
             } else if (command == "toptrending") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/trending_levels.json");
-                const levelData = await levelResponse.json();
+                const levelData = await getTrendingLevels();
                 const level = levelData[0];
                 const fields = [
                     {
@@ -260,7 +266,7 @@ export default {
                         globalStats.average_time += level.statistics.time;
                     }
                     globalStats.complexity += level.complexity;
-                    globalStats.iterations += parseInt(level.data_key.split(':')[3]);
+                    globalStats.iterations += level.iteration || 1;
                 });
                 globalStats.average_difficulty /= globalStats.verified_maps;
                 globalStats.average_likes /= globalStats.verified_maps;
