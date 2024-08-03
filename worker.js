@@ -48,6 +48,12 @@ export default {
         if(searchData.length >= 1) {
             // exact matches
             for (let result of searchData) {
+                if (result.user_name == query) {
+                    return result;
+                }
+            }
+            // lowercase
+            for (let result of searchData) {
                 if (result.user_name.toLowerCase() == query.toLowerCase()) {
                     return result;
                 }
@@ -378,8 +384,8 @@ export default {
                 }
                 const userID = userData.user_id;
                 const userName = userData.user_name;
-                const levelCount = userData.user_level_count;
-                const primaryColor = userData?.active_customizations?.player_color_primary?.color;
+                const levelCount = userData.user_level_count || 0;
+                const primaryColor = userData?.active_customizations?.player_color_primary?.color || [0, 0, 0];
                 
                 const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userID}`;
                 const levelResponse = await fetch(levelSearch);
@@ -418,10 +424,12 @@ export default {
                     level?.statistics?.time != undefined ? statistics.time_maps += 1 : null;
                     statistics.complexity += level.complexity;
                 }
-                statistics.average_difficulty /= statistics.maps;
-                statistics.average_likes /= statistics.maps;
-                statistics.average_time /= statistics.time_maps;
-                statistics.average_plays = statistics.plays / statistics.maps;
+                if (levelData.length > 0) {
+                    statistics.average_difficulty /= statistics.maps;
+                    statistics.average_likes /= statistics.maps;
+                    statistics.average_time /= statistics.time_maps;
+                    statistics.average_plays = statistics.plays / statistics.maps;
+                }
 
                 const primaryColorAsHex = `${this.colorComponentToHex(primaryColor[0])}${this.colorComponentToHex(primaryColor[1])}${this.colorComponentToHex(primaryColor[2])}`;
 
