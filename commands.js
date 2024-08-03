@@ -36,6 +36,8 @@ export const commands = [
     {
         name: "globalstats",
         description: "Get global level statistics",
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "actualtrending",
@@ -51,7 +53,9 @@ export const commands = [
                 required: true,
                 type: 3
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "whois",
@@ -63,7 +67,9 @@ export const commands = [
                 required: true,
                 type: 3
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "random",
@@ -75,7 +81,9 @@ export const commands = [
                 required: true,
                 type: 5
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "newest",
@@ -87,7 +95,9 @@ export const commands = [
                 required: false,
                 type: 3
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "oldest",
@@ -99,7 +109,9 @@ export const commands = [
                 required: true,
                 type: 3
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "leaderboard",
@@ -117,7 +129,9 @@ export const commands = [
                 required: true,
                 type: 3
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     },
     {
         name: "gethardest",
