@@ -80,9 +80,7 @@ export default {
     async getTrendingLevels() {
         const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
         const data = await response.json();
-        const trending = [data]
-        .sort((a, b) => b.change - a.change)
-        .slice(0, 200);
+        const trending = data.sort((a, b) => b.change - a.change).slice(0, 200);
         return trending;
     },
 
