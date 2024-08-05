@@ -1150,7 +1150,7 @@ export default {
                     data: {
                         tts: false,
                         content: iterationList.map(
-                            (link, i) => `[Iteration ${i}](${link})`
+                            (link, i) => `[Iteration ${i+1}](${link})`
                         ).join("\n"),
                         embeds: [],
                         allowed_mentions: { parse: [] }
