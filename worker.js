@@ -1033,8 +1033,7 @@ export default {
                     is_creator ? "Creator" : "",
                     is_admin ? "Admin" : "",
                     is_moderator ? "Moderator" : "",
-                    is_verifier ? "Verifier" : "",
-                    roleString.length > 0 ? roleString : "None"
+                    is_verifier ? "Verifier" : ""
                 ].filter(
                     role => role.length > 0
                 )
@@ -1151,7 +1150,7 @@ export default {
                     data: {
                         tts: false,
                         content: iterationList.map(
-                            link => `[Iteration ${i}](${link})`
+                            (link, i) => `[Iteration ${i}](${link})`
                         ).join("\n"),
                         embeds: [],
                         allowed_mentions: { parse: [] }
@@ -1190,12 +1189,8 @@ export default {
                     type: 4,
                     data: {
                         tts: false,
-                        content: "",
-                        embeds: [{
-                            "type": "image",
-                            "url": imageUrl,
-                            "title": detailsUrl.title + ' thumbnail'
-                        }],
+                        content: `[${detailsData.title}'s thumbnail](${imageUrl})`,
+                        embeds: [],
                         allowed_mentions: { parse: [] }
                     }
                 });
