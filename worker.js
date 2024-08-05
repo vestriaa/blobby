@@ -935,7 +935,7 @@ export default {
             } else if (command == "ID_leaderboard") {
                 const message = json.data.resolved.messages[json.data.target_id].content;
                 const matches = /\?level=([^\s>]+)/g.exec(message);
-                const levelID = matches.length > 0 ? matches[0] : '';
+                const levelID = matches.length > 1 ? matches[1] : '';
                 if (levelID == '') {
                     return Response.json({
                         type: 4,
