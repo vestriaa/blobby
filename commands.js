@@ -213,6 +213,7 @@ export const commands = [
     },
     {
         name: "say",
+        description: "",
         type: 3,
         options: [
             {
@@ -221,6 +222,8 @@ export const commands = [
                 required: true,
                 type: 3
             }
-        ]
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     }
 ];
