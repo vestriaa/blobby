@@ -212,7 +212,7 @@ export const commands = [
         ]
     },
     {
-        name: "silly",
+        name: "ID_leaderboard",
         type: 3,
         integration_types: [0, 1],
         contexts: [0, 1, 2]

@@ -932,34 +932,50 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
-            } else if (command == "silly") {
-                const url = `https://discord.com/api/v10/channels/${json.channel_id}/messages`;
-                await fetch(url, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        tts: false,
-                        content: ":3",
-                        embeds: [],
-                        allowed_mentions: { parse: [] },
-                        message_reference: {
-                            message_id: json.data.target_id
+            } else if (command == "ID_leaderboard") {
+                const message = json.data.resolved.messages[json.data.target_id].content;
+                const matches = /\?level=([^\s>]+)/g.exec(message);
+                const levelID = matches.length > 0 ? matches[0] : '';
+                if (levelID == '') {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Couldn't identify level",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                            // TODO: ephemeral somehow?
                         }
-                    }),
-                    headers: {
-                        Authorization: `Bot ${env.PUBLIC_KEY}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
+                    });
+                }
+                const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
+                const leaderboardResponse = await fetch(leaderboardUrl);
+                const leaderboardData = await leaderboardResponse.json();
+                let description = [];
+                let maxDecimals = 0;
+                leaderboardData.forEach((entry) => {
+                    let decimals = entry.best_time.toString().split(".")[1];
+                    if (decimals) {
+                        maxDecimals = Math.max(maxDecimals, decimals.length);
+                    }
                 });
-
+                for(let i = 0; i < Math.min(10, leaderboardData.length); i++) {
+                    description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${this.formatTime(leaderboardData[i].best_time, maxDecimals)}`);
+                }
                 return Response.json({
                     type: 4,
                     data: {
                         tts: false,
-                        content: ":3",
-                        embeds: [],
-                        allowed_mentions: { parse: [] },
-                        ephermeral: true
+                        content: "",
+                        embeds: [{
+                            "type": "rich",
+                            "title": `Leaderboard for level`,
+                            "description": description.join("\n"),
+                            "color": 0x618dc3,
+                            "fields": [],
+                            "url": `https://grabvr.quest/levels/viewer/?level=${levelID}`
+                        }],
+                        allowed_mentions: { parse: [] }
                     }
                 });
             }
