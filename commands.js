@@ -1,5 +1,25 @@
 export const commands = [
     {
+        name: "level",
+        description: "Get a level link",
+        options: [
+            {
+                name: "title",
+                description: "Title of the level",
+                required: true,
+                type: 3
+            },
+            {
+                name: "creator",
+                description: "The level creators username",
+                required: false,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
         name: "unbeaten",
         description: "Get the current unbeaten levels list",
     },
@@ -126,7 +146,7 @@ export const commands = [
             {
                 name: "creator",
                 description: "The level creators username",
-                required: true,
+                required: false,
                 type: 3
             }
         ],

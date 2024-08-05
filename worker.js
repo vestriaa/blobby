@@ -77,6 +77,28 @@ export default {
         }
     },
 
+    async getLevel(queryTitle, queryCreator) {
+        const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=999&type=search&search_term=${queryTitle}`;
+        const levelResponse = await fetch(levelSearch);
+        const levelData = await levelResponse.json();
+        if (queryCreator == '') {
+            return levelData[0];
+        }
+        const foundLevels = [];
+        for(const level of levelData) {
+            if("creators" in level) {
+                for(const creator of level.creators) {
+                    if(creator.toLowerCase().includes(queryCreator.toLowerCase())) {
+                        foundLevels.push(level);
+                        break;
+                    }
+                }
+            }
+        }
+        foundLevels.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))
+        return foundLevels.length > 0? foundLevels[0] : false;
+    },
+
     async getTrendingLevels() {
         const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
         const data = await response.json();
@@ -290,24 +312,11 @@ export default {
                 });
             } else if (command == "leaderboard") {
                 const queryTitle = json.data.options[0].value;
-                const queryCreator = json.data.options[1].value;
-                const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=search&search_term=${queryTitle}`;
-                const levelResponse = await fetch(levelSearch);
-                const levelData = await levelResponse.json();
-                const foundLevels = []
-                for(const level of levelData) {
-                    if("creators" in level) {
-                        for(const creator of level.creators) {
-                            if(creator.toLowerCase().includes(queryCreator.toLowerCase())) {
-                                foundLevels.push(level);
-                                break;
-                            }
-                        }
-                    }
-                }
-                foundLevels.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))
-                if(foundLevels.length >= 1) {
-                    const levelID = foundLevels[0].identifier;
+                const queryCreator = json.data.options.length > 1 ? [1].value : '';
+                const levelData = await this.getLevel(queryTitle, queryCreator);
+                
+                if(levelData) {
+                    const levelID = levelData.identifier;
                     const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
                     const leaderboardResponse = await fetch(leaderboardUrl);
                     const leaderboardData = await leaderboardResponse.json();
@@ -329,7 +338,7 @@ export default {
                             content: "",
                             embeds: [{
                                 "type": "rich",
-                                "title": `Leaderboard for ${foundLevels[0].title}`,
+                                "title": `Leaderboard for ${levelData.title}`,
                                 "description": description.join("\n"),
                                 "color": 0x618dc3,
                                 "fields": [],
@@ -340,14 +349,41 @@ export default {
                     });
                 } else {
                     return Response.json({
-                    type: 4,
-                    data: {
-                        tts: false,
-                        content: "Could not find a level with that title and creator",
-                        embeds: [],
-                        allowed_mentions: { parse: [] }
-                    }
-                });
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a level with that title and creator",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+            } else if (command == "level") {
+                const queryTitle = json.data.options[0].value;
+                const queryCreator = json.data.options.length > 1 ? [1].value : '';
+                const levelData = await this.getLevel(queryTitle, queryCreator);
+                
+                if(levelData) {
+                    const url = `https://grabvr.quest/levels/viewer?level=${levelData.identifier}`;
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: url,
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                } else {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Could not find a level with that title and creator",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
                 }
             } else if (command == "id") {
                 const queryUsername = json.data.options[0].value;
