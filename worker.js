@@ -1141,17 +1141,22 @@ export default {
                 const iterations = detailsData.iteration;
 
                 let iterationList = [];
+                let length = 0;
                 for (let i = iterations; i > 0; i--) {
-                    iterationList.push(`https://grabvr.quest/levels/viewer?level=${levelID}:${i}`);
+                    let str = `[Iteration ${i+1}](<https://grabvr.quest/levels/viewer?level=${levelID}:${i}>)`;
+                    length += str.length;
+                    if (length > 1900) {
+                        iterationList.push(`... (${iterationList.length + 1} of ${iterations} iterations shown)`);
+                        break;
+                    }
+                    iterationList.push(str);
                 }
 
                 return Response.json({
                     type: 4,
                     data: {
                         tts: false,
-                        content: iterationList.map(
-                            (link, i) => `[Iteration ${i+1}](<${link}>)`
-                        ).join("\n"),
+                        content: iterationList.join("\n"),
                         embeds: [],
                         allowed_mentions: { parse: [] }
                     }
