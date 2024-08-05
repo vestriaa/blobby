@@ -212,17 +212,8 @@ export const commands = [
         ]
     },
     {
-        name: "say",
-        description: "",
+        name: "silly",
         type: 3,
-        options: [
-            {
-                name: "message",
-                description: "The message to send",
-                required: true,
-                type: 3
-            }
-        ],
         integration_types: [0, 1],
         contexts: [0, 1, 2]
     }

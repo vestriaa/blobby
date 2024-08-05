@@ -932,14 +932,13 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
-            } else if (command == "say") {
-                const response = json.data.options[0].value;
+            } else if (command == "silly") {
                 const url = `https://discord.com/api/v10/channels/${json.channel_id}/messages`;
                 await fetch(url, {
                     method: "POST",
                     body: JSON.stringify({
                         tts: false,
-                        content: response,
+                        content: ":3",
                         embeds: [],
                         allowed_mentions: { parse: [] },
                         message_reference: {
@@ -947,7 +946,7 @@ export default {
                         }
                     }),
                     headers: {
-                        Authorization: `Bot ${client.token}`,
+                        Authorization: `Bot ${env.PUBLIC_KEY}`,
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
@@ -957,7 +956,7 @@ export default {
                     type: 4,
                     data: {
                         tts: false,
-                        content: response,
+                        content: ":3",
                         embeds: [],
                         allowed_mentions: { parse: [] },
                         ephermeral: true
