@@ -1145,12 +1145,12 @@ export default {
                 let lastString = `...\n[Iteration ${1}](<https://grabvr.quest/levels/viewer?level=${levelID}:${1}>)`;
                 let endString = `... (XXX of XXX iterations shown)`;
                 for (let i = iterations; i > 0; i--) {
-                    let str = `[Iteration ${i+1}](<https://grabvr.quest/levels/viewer?level=${levelID}:${i+1}>)`;
+                    let str = `[Iteration ${i}](<https://grabvr.quest/levels/viewer?level=${levelID}:${i}>)`;
                     length += str.length;
                     if (i > 1 && length > 2000 - lastString.length - 1 - endString.length - 1) {
                         if (iterationList.length < iterations) {
                             iterationList.push(lastString);
-                            iterationList.push(`-# (${iterationList.length + 1} of ${iterations} iterations shown)`);
+                            iterationList.push(`-# (${iterationList.length} of ${iterations} iterations shown)`);
                             break;
                         }
                     }
