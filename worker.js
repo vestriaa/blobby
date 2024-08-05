@@ -312,7 +312,7 @@ export default {
                 });
             } else if (command == "leaderboard") {
                 const queryTitle = json.data.options[0].value;
-                const queryCreator = json.data.options.length > 1 ? [1].value : '';
+                const queryCreator = json.data.options.length > 1 ? json.data.options[1].value : '';
                 const levelData = await this.getLevel(queryTitle, queryCreator);
                 
                 if(levelData) {
@@ -360,7 +360,7 @@ export default {
                 }
             } else if (command == "level") {
                 const queryTitle = json.data.options[0].value;
-                const queryCreator = json.data.options.length > 1 ? [1].value : '';
+                const queryCreator = json.data.options.length > 1 ? json.data.options[1].value : '';
                 const levelData = await this.getLevel(queryTitle, queryCreator);
                 
                 if(levelData) {
