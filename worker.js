@@ -932,6 +932,37 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "say") {
+                const response = json.data.options[0].value;
+                const url = `https://discord.com/api/v10/channels/${json.channel_id}/messages`;
+                await fetch(url, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        tts: false,
+                        content: response,
+                        embeds: [],
+                        allowed_mentions: { parse: [] },
+                        message_reference: {
+                            message_id: json.data.target_id
+                        }
+                    }),
+                    headers: {
+                        Authorization: `Bot ${client.token}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: response,
+                        embeds: [],
+                        allowed_mentions: { parse: [] },
+                        ephermeral: true
+                    }
+                });
             }
         }
 

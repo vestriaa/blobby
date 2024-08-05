@@ -210,5 +210,17 @@ export const commands = [
                 type: 4
             }
         ]
+    },
+    {
+        name: "say",
+        type: 3,
+        options: [
+            {
+                name: "message",
+                description: "The message to send",
+                required: true,
+                type: 3
+            }
+        ]
     }
 ];
