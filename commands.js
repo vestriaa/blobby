@@ -212,9 +212,39 @@ export const commands = [
         ]
     },
     {
-        name: "ID_leaderboard",
+        name: "Get leaderboard",
         type: 3,
         integration_types: [0, 1],
         contexts: [0, 1, 2]
-    }
+    },
+    {
+        name: "Get creator",
+        type: 3,
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
+        name: "Get complexity",
+        type: 3,
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
+        name: "Get iterations",
+        type: 3,
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
+        name: "Get thumbnail",
+        type: 3,
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    // {
+    //     name: "Add to fanart",
+    //     type: 3,
+    //     integration_types: [0, 1],
+    //     contexts: [0, 1, 2]
+    // }
 ];

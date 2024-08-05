@@ -129,6 +129,7 @@ export default {
         }
 
         if (json.type == 2) {
+            const indexUserId = "649165311257608192";
             const hardestRoleId = "1224307852248612986";
             const command = json.data.name;
             if (command == "unbeaten") {
@@ -932,7 +933,7 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
-            } else if (command == "ID_leaderboard") {
+            } else if (command == "Get leaderboard") {
                 const message = json.data.resolved.messages[json.data.target_id];
                 const matches = /\?level=([^\s>)&]+)/g.exec(message.content);
                 let levelID = matches?.length > 1 ? matches[1] : '';
@@ -952,7 +953,6 @@ export default {
                             content: "Couldn't identify level",
                             embeds: [],
                             allowed_mentions: { parse: [] }
-                            // TODO: ephemeral somehow?
                         }
                     });
                 }
@@ -986,6 +986,244 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "Get creator") {
+                const message = json.data.resolved.messages[json.data.target_id];
+                const matches = /\?level=([^\s>)&]+)/g.exec(message.content);
+                let levelID = matches?.length > 1 ? matches[1] : '';
+                if (levelID == '') {
+                    if (message.embeds?.length > 0) {
+                        const embedContent = JSON.stringify(message.embeds);
+                        const embedMatches = /\?level=([^\s>)&"\]]+)/g.exec(embedContent);
+                        levelID = embedMatches?.length > 1 ? embedMatches[1] : '';
+                    }
+                }
+
+                if (levelID == '') {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Couldn't identify level",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+                let userID = levelID.split(":")[0];
+                const creatorUrl = `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`;
+                let userIDInt = [...userID.toString()].reduce((r,v) => r * BigInt(36) + BigInt(parseInt(v,36)), 0n);
+                userIDInt >>= BigInt(32);
+                userIDInt >>= BigInt(32);
+                const joinDate = new Date(Number(userIDInt));
+                const unixTime = Math.floor(joinDate.getTime() / 1000);
+                const joinString = `<t:${unixTime}>`;
+
+                const playerDetailsUrl = `https://api.slin.dev/grab/v1/get_user_info?user_id=${userID}`;
+                const playerDetailsResponse = await fetch(playerDetailsUrl);
+                const playerDetailsData = await playerDetailsResponse.json();
+                const playerName = playerDetailsData.user_name;
+                const levelCount = playerDetailsData.user_level_count;
+                const is_creator = playerDetailsData.is_creator;
+                const is_admin = playerDetailsData.is_admin;
+                const is_moderator = playerDetailsData.is_moderator;
+                const is_verifier = playerDetailsData.is_verifier;
+                const is_super = ["29sgp24f1uorbc6vq8d2k", "2ak0ysv35egakgfilswpy"].includes(userID);
+                const roleString = [
+                    is_super ? "Soupy" : "",
+                    is_creator ? "Creator" : "",
+                    is_admin ? "Admin" : "",
+                    is_moderator ? "Moderator" : "",
+                    is_verifier ? "Verifier" : "",
+                    roleString.length > 0 ? roleString : "None"
+                ].filter(
+                    role => role.length > 0
+                )
+                .join(" | ")
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [{
+                            "type": "rich",
+                            "title": playerName,
+                            "description": levelCount + " levels",
+                            "color": 0x333333,
+                            "fields": [
+                                {
+                                    "name": "Playing since",
+                                    "value": joinString,
+                                    "inline": false
+                                },
+                                {
+                                    "name": "identifier",
+                                    "value": userID,
+                                    "inline": false
+                                }
+                            ],
+                            "url": creatorUrl,
+                            "footer": {
+                                "text": roleString
+                            }
+                        }],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "Get complexity") {
+                const message = json.data.resolved.messages[json.data.target_id];
+                const matches = /\?level=([^\s>)&]+)/g.exec(message.content);
+                let levelID = matches?.length > 1 ? matches[1] : '';
+                if (levelID == '') {
+                    if (message.embeds?.length > 0) {
+                        const embedContent = JSON.stringify(message.embeds);
+                        const embedMatches = /\?level=([^\s>)&"\]]+)/g.exec(embedContent);
+                        levelID = embedMatches?.length > 1 ? embedMatches[1] : '';
+                    }
+                }
+
+                if (levelID == '') {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Couldn't identify level",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+                const detailsUrl = `https://api.slin.dev/grab/v1/details/${levelID.replace(":", "/")}`;
+                const detailsResponse = await fetch(detailsUrl);
+                const detailsData = await detailsResponse.json();
+                const complexity = detailsData.complexity;
+
+                const playerID = levelID.split(":")[0];
+
+                const playerDetailsUrl = `https://api.slin.dev/grab/v1/get_user_info?user_id=${playerID}`;
+                const playerDetailsResponse = await fetch(playerDetailsUrl);
+                const playerDetailsData = await playerDetailsResponse.json();
+                const is_creator = playerDetailsData.is_creator;
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: complexity + " / " + (is_creator ? "3000" : "1500") + " complexity",
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "Get iterations") {
+                const message = json.data.resolved.messages[json.data.target_id];
+                const matches = /\?level=([^\s>)&]+)/g.exec(message.content);
+                let levelID = matches?.length > 1 ? matches[1] : '';
+                if (levelID == '') {
+                    if (message.embeds?.length > 0) {
+                        const embedContent = JSON.stringify(message.embeds);
+                        const embedMatches = /\?level=([^\s>)&"\]]+)/g.exec(embedContent);
+                        levelID = embedMatches?.length > 1 ? embedMatches[1] : '';
+                    }
+                }
+
+                if (levelID == '') {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Couldn't identify level",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+                const detailsUrl = `https://api.slin.dev/grab/v1/details/${levelID.replace(":", "/")}`;
+                const detailsResponse = await fetch(detailsUrl);
+                const detailsData = await detailsResponse.json();
+                const iterations = detailsData.iteration;
+
+                let iterationList = [];
+                for (let i = iterations; i > 0; i--) {
+                    iterationList.push(`https://grabvr.quest/levels/viewer?level=${levelID}:${i}`);
+                }
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: iterationList.map(
+                            link => `[Iteration ${i}](${link})`
+                        ).join("\n"),
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "Get thumbnail") {
+                const message = json.data.resolved.messages[json.data.target_id];
+                const matches = /\?level=([^\s>)&]+)/g.exec(message.content);
+                let levelID = matches?.length > 1 ? matches[1] : '';
+                if (levelID == '') {
+                    if (message.embeds?.length > 0) {
+                        const embedContent = JSON.stringify(message.embeds);
+                        const embedMatches = /\?level=([^\s>)&"\]]+)/g.exec(embedContent);
+                        levelID = embedMatches?.length > 1 ? embedMatches[1] : '';
+                    }
+                }
+
+                if (levelID == '') {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Couldn't identify level",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+                const detailsUrl = `https://api.slin.dev/grab/v1/details/${levelID.replace(":", "/")}`;
+                const detailsResponse = await fetch(detailsUrl);
+                const detailsData = await detailsResponse.json();
+                const image_iteration = detailsData.iteration_image;
+                const imageUrl = `https://grab-images.slin.dev/level_${levelID.replace(":", "_")}_${image_iteration}.png`;
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [{
+                            "type": "image",
+                            "url": imageUrl,
+                            "title": detailsUrl.title + ' thumbnail'
+                        }],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
+            } else if (command == "Add to fanart") {
+                // TODO:
+                if (json.member.user.id !== indexUserId) {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Nuh uh",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+
+                const indexGuildId = "1048213818775437394";
+                const fanartChannelId = "1163963988544069662";
+
+                const message = json.data.resolved.messages[json.data.target_id];
+                const attachments = message.attachments;
+
+                for (let i = 0; i < attachments.length; i++) {
+                    const attachment = attachments[i];
+                    const url = attachment.url;
+                }
+
             }
         }
 
