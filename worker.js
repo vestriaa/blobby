@@ -1146,6 +1146,9 @@ export default {
                 let endString = `... (XXX of XXX iterations shown)`;
                 for (let i = iterations; i > 0; i--) {
                     let str = `[Iteration ${i}](<https://grabvr.quest/levels/viewer?level=${levelID}:${i}>)`;
+                    if (length == 0) {
+                        str += " (current)";
+                    }
                     length += str.length;
                     if (i > 1 && length > 2000 - lastString.length - 1 - endString.length - 1) {
                         if (iterationList.length < iterations) {
