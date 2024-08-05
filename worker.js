@@ -933,9 +933,17 @@ export default {
                     }
                 });
             } else if (command == "ID_leaderboard") {
-                const message = json.data.resolved.messages[json.data.target_id].content;
-                const matches = /\?level=([^\s>)&]+)/g.exec(message);
-                const levelID = matches.length > 1 ? matches[1] : '';
+                const message = json.data.resolved.messages[json.data.target_id];
+                const matches = /\?level=([^\s>)&]+)/g.exec(message.content);
+                let levelID = matches.length > 1 ? matches[1] : '';
+                if (levelID == '') {
+                    if (message.embeds?.length > 0) {
+                        const embedContent = JSON.stringify(message.embeds);
+                        const embedMatches = /\?level=([^\s>)&"\]]+)/g.exec(embedContent);
+                        levelID = embedMatches.length > 1 ? embedMatches[1] : '';
+                    }
+                }
+
                 if (levelID == '') {
                     return Response.json({
                         type: 4,
