@@ -491,15 +491,6 @@ export default {
                     }
                 });
             } else if (command == "whois") {
-                return Response.json({
-                    type: 4,
-                    data: {
-                        tts: false,
-                        content: "Currently unavailable",
-                        embeds: [],
-                        allowed_mentions: { parse: [] }
-                    }
-                });
                 const queryUsername = json.data.options[0].value;
                 const userData = await this.getPlayerDetails(queryUsername);
                 if (!userData) {
@@ -515,21 +506,7 @@ export default {
                 }
                 const userID = userData.user_id;
                 if ([
-                    "2abebn7t4lq4ydl89oxje",
-                    "290oi9frh8eihrh1r5z0q",
-                    "2ba0vdij87qvy2tpcyph0",
-                    "2bhgdcb2kimyldou78r0l",
-                    "29n9hjza4lerqn38ee32h",
-                    "2ak0ysv35egakgfilswpy",
-                    "29id5ta7mb54j28tz6wfe",
-                    "29vhvl94jvlw4vp4b019y",
-                    "29sgp24f1uorbc6vq8d2k",
-                    "29lmdv56fjch18bes1u2j",
-                    "2awf62f0y60gptc9cbecf",
-                    "2cmndb6aqd04eegbagxbo",
-                    "2apqgju0ttomc3mztt3p6",
-                    "29w20l59y1m2zkzhkojnu",
-                    "29t798uon2urbra1f8w2q"
+                    // blacklist of ids
                 ].includes(userID)) {
                     return Response.json({
                         type: 4,
@@ -542,35 +519,47 @@ export default {
                     });
                 }
                 const userName = userData.user_name;
-                if (userName.includes("storeqa_")) {
-                    return Response.json({
-                        type: 4,
-                        data: {
-                            tts: false,
-                            content: "Could not find a player with that usernamee",
-                            embeds: [],
-                            allowed_mentions: { parse: [] }
-                        }
-                    });
-                }
                 let details = {
                     primary: [0,0,0],
                     secondary: [0,0,0],
+
                     hat: "none",
                     face: "none",
                     head: "default",
-                    grapple: "default",
-                    hands: "claw",
-                    checkpoint: "default",
                     neck: "none",
-                    creator: false,
-                    moderator: false,
-                    verifier: false
+
+                    grappleRight: "default",
+                    grappleLeft: "default",
+                    hands: "claw",
+
+                    body: "default",
+                    backpack: "none",
+                    badgeRight: "none",
+                    badgeLeft: "none",
+
+                    checkpoint: "default",
+
+                    roles: {
+                        creator: false,
+                        verifier: false,
+                        moderator: false,
+                        super_mod: false,
+                        admin: false,
+                        owner: false,
+                    }
                 };
                 const player = userData;
-                if (player.is_verifier) { details.verifier = true; }
-                if (player.is_creator) { details.creator = true; }
-                if (player.is_moderator) { details.moderator = true; }
+
+                if (player.is_verifier) { details.roles.verifier = true; }
+                if (player.is_creator) { details.roles.creator = true; }
+                if (player.is_moderator) { details.roles.moderator = true; }
+                if ([
+                    "29sgp24f1uorbc6vq8d2k", // dotindex
+                    "2ak0ysv35egakgfilswpy" // EBSpark
+                ].includes(player.user_id)) { details.roles.super_mod = true; }
+                if (player.is_admin) { details.roles.admin = true; }
+                if (player.user_id == "290oi9frh8eihrh1r5z0q") { details.roles.owner = true; } // Slin
+
                 if (player.active_customizations) {
                     if (player.active_customizations?.player_color_primary?.color) {
                         details.primary = player.active_customizations.player_color_primary.color;
@@ -580,21 +569,27 @@ export default {
                     }
                     if (player.active_customizations.items) {
                         const items = player.active_customizations.items;
-                        if (items["head/glasses"]) {details.face = items["head/glasses"].replace("_basic", "").replace("head_glasses_", "").replaceAll("_", " ")}
-                        if (items["grapple/hook"]) {details.grapple = items["grapple/hook"].replace("_basic", "").replace("grapple_hook_", "").replaceAll("_", " ")}
                         if (items["head/hat"]) {details.hat = items["head/hat"].replace("_basic", "").replace("head_hat_", "").replaceAll("_", " ")}
-                        if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("_basic", "").replace("checkpoint_", "").replaceAll("_", " ")}
+                        if (items["head/glasses"]) {details.face = items["head/glasses"].replace("_basic", "").replace("head_glasses_", "").replaceAll("_", " ")}
                         if (items["head"]) {details.head = items["head"].replace("_basic", "").replace("head_", "").replaceAll("_", " ")}
-                        if (items["hand"]) {details.hands = items["hand"].replace("_basic", "").replace("hand_", "").replaceAll("_", " ")}
                         if (items["body/neck"]) {details.neck = items["body/neck"].replace("_basic", "").replace("body_neck_", "").replaceAll("_", " ")}
+
+                        if (items["grapple/hook/right"]) {details.grappleRight = items["grapple/hook/right"].replace("_basic", "").replace("grapple_hook_", "").replaceAll("_", " ")}
+                        if (items["grapple/hook/left"]) {details.grappleLeft = items["grapple/hook/left"].replace("_basic", "").replace("grapple_hook_", "").replaceAll("_", " ")}
+                        if (items["hand"]) {details.hands = items["hand"].replace("_basic", "").replace("hand_", "").replaceAll("_", " ")}
+
+                        if (items["body"]) {details.body = items["body"].replace("_basic", "").replace("body_", "").replaceAll("_", " ")}
+                        if (items["body/backpack"]) {details.backpack = items["body/backpack"].replace("_basic", "").replace("body_backpack_", "").replaceAll("_", " ")}
+                        if (items["body/badge/right"]) {details.badgeRight = items["body/badge/right"].replace("_basic", "").replace("body_badge_", "").replaceAll("_", " ")}
+                        if (items["body/badge/left"]) {details.badgeLeft = items["body/badge/left"].replace("_basic", "").replace("body_badge_", "").replaceAll("_", " ")}
+
+                        if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("_basic", "").replace("checkpoint_", "").replaceAll("_", " ")}
                     }
                 }
                 const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
                 const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
-                const roles = [details.moderator, details.creator, details.verifier].map((role, index) => role ? ["Moderator", "Creator", "Verifier"][index] : null).filter(role => role !== null);
-                if (["29sgp24f1uorbc6vq8d2k", "2ak0ysv35egakgfilswpy"].includes(userID)) {
-                    roles.push("Soopy");
-                }
+                
+                const roles = Object.keys(details.roles).map((role, index) => role ? Object.keys(details.roles.map(r => r.replace(/(?:^|\s)\S/g, match => match.toUpperCase())))[index] : null).filter(role => role !== null);
                 return Response.json({
                     type: 4,
                     data: {
@@ -1028,12 +1023,14 @@ export default {
                 const is_moderator = playerDetailsData.is_moderator;
                 const is_verifier = playerDetailsData.is_verifier;
                 const is_super = ["29sgp24f1uorbc6vq8d2k", "2ak0ysv35egakgfilswpy"].includes(userID);
+                const is_owner = userID == "290oi9frh8eihrh1r5z0q";
                 const roleString = [
-                    is_super ? "Soupy" : "",
+                    is_super ? "Super Mod" : "",
                     is_creator ? "Creator" : "",
                     is_admin ? "Admin" : "",
                     is_moderator ? "Moderator" : "",
-                    is_verifier ? "Verifier" : ""
+                    is_verifier ? "Verifier" : "",
+                    is_owner ? "Owner" : ""
                 ].filter(
                     role => role.length > 0
                 )
