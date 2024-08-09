@@ -601,7 +601,23 @@ export default {
                         embeds: [{
                             "type": "rich",
                             "title": `${userName}'s details`,
-                            "description": `**Primary:** #${primaryColorAsHex}\n**Secondary:** #${secondaryColorAsHex}\n**Hat:** ${details.hat}\n**Face:** ${details.face}\n**Head:** ${details.head}\n**Grapple:** ${details.grapple}\n**Hands:** ${details.hands}\n**Checkpoint:** ${details.checkpoint}\n**Neck:** ${details.neck}`,
+                            "description": 
+                                `**Primary:** #${primaryColorAsHex}\n`+
+                                `**Secondary:** #${secondaryColorAsHex}\n`+
+
+                                `**Hat:** ${details.hat}\n`+
+                                `**Face:** ${details.face}\n`+
+                                `**Head:** ${details.head}\n`+
+                                `**Neck:** ${details.neck}\n`+
+
+                                `**Grapples:** ${details.grappleLeft} & ${details.grappleRight}\n`+
+                                `**Hands:** ${details.hands}\n`+
+
+                                `**Body:** ${details.body}\n`+
+                                `**Backpack:** ${details.backpack}\n`+
+                                `**Badges:** ${details.badgeLeft} & ${details.badgeRight}\n`+
+                                
+                                `**Checkpoint:** ${details.checkpoint}\n`,
                             "color": parseInt(primaryColorAsHex, 16),
                             "fields": [],
                             "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`,
