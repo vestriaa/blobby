@@ -591,7 +591,7 @@ export default {
                 
                 const roleKeys = Object.keys(details.roles);
                 const roles = roleKeys.map((role, index) => 
-                    details.roles[role] ? roleKeys[index].replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null
+                    details.roles[role] ? roleKeys[index].replace("_", " ").replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null
                 ).filter(role => role !== null);
                 return Response.json({
                     type: 4,
