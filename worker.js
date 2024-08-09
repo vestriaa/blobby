@@ -616,8 +616,8 @@ export default {
                                 `**Body:** ${details.body}\n`+
                                 `**Backpack:** ${details.backpack}\n`+
                                 `**Badges:** ${details.badgeLeft} & ${details.badgeRight}\n`+
-                                
-                                `**Checkpoint:** ${details.checkpoint}\n`,
+
+                                `**Checkpoint:** ${details.checkpoint}`,
                             "color": parseInt(primaryColorAsHex, 16),
                             "fields": [],
                             "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`,
