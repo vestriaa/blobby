@@ -589,7 +589,11 @@ export default {
                 const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
                 const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
                 
-                const roles = Object.keys(details.roles).map((role, index) => role ? Object.keys(details.roles.map(r => r.replace(/(?:^|\s)\S/g, match => match.toUpperCase())))[index] : null).filter(role => role !== null);
+                const roles = Object.keys(details.roles).map(
+                    (role, index) => role ? Object.keys(details.roles).map(
+                        r => r.replace(/(?:^|\s)\S/g, match => match.toUpperCase())
+                    )
+                [index] : null).filter(role => role !== null);
                 return Response.json({
                     type: 4,
                     data: {
