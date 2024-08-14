@@ -784,12 +784,13 @@ export default {
                             }
                         });
                     }
-                } else if (func == "listall") {
+                } else if (func == "page") {
                     let list = await env.NAMESPACE.get("list");
                     if (list) {
+                        const page = json.data.options[1].value - 1;
                         const listData = JSON.parse(list);
                         const description = [];
-                        for (let i = 0; i < listData.length; i++) {
+                        for (let i = Math.max(50 * page, 0); i < Math.min(50 * page + 50, listData.length); i++) {
                             const item = listData[i];
                             description.push(`${i+1} ${item.title}`);
                         }
@@ -830,7 +831,12 @@ export default {
                     let list = await env.NAMESPACE.get("list");
                     if (list) {
                         let listData = JSON.parse(list);
-                        const levelLink = json.data.options[1].value;
+                        let levelLink = json.data.options[1].value;
+                        let position = json.data.options[2].value;
+                        if (typeof levelLink != "string") {
+                            levelLink = json.data.options[2].value;
+                            position = json.data.options[1].value;
+                        }
                         const levelId = levelLink.split("level=")[1];
                         const levelUrl = `https://api.slin.dev/grab/v1/details/${levelId.replace(":", "/")}`;
                         const levelResponse = await fetch(levelUrl);
@@ -840,7 +846,11 @@ export default {
                             "id": levelId,
                             "creator": levelData.creators.length > 0 ? levelData.creators[0] : "",
                         };
-                        listData.push(listItem);
+                        if (position) {
+                            listData.splice(position - 1, 0, listItem);
+                        } else {
+                            listData.push(listItem);
+                        }
                         await env.NAMESPACE.put("list", JSON.stringify(listData));
                         return Response.json({
                             type: 4,

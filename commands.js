@@ -192,8 +192,8 @@ export const commands = [
                         value: "move"
                     },
                     {
-                        name: "listall",
-                        value: "listall"
+                        name: "page",
+                        value: "page"
                     }
                 ]
             },
@@ -204,8 +204,8 @@ export const commands = [
                 type: 3
             },
             {
-                name: "position",
-                description: "Position to move level for 'move' command",
+                name: "number",
+                description: "Position to move or add to, or page number",
                 required: false,
                 type: 4
             }
