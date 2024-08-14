@@ -846,8 +846,10 @@ export default {
                             "id": levelId,
                             "creator": levelData.creators.length > 0 ? levelData.creators[0] : "",
                         };
+                        let extra = "";
                         if (position) {
                             listData.splice(position - 1, 0, listItem);
+                            extra = `at position ${position}`;
                         } else {
                             listData.push(listItem);
                         }
@@ -856,7 +858,7 @@ export default {
                             type: 4,
                             data: {
                                 tts: false,
-                                content: `Added ${levelData.title} to list`,
+                                content: `Added ${levelData.title} to list ${extra}`,
                                 embeds: [],
                                 allowed_mentions: { parse: [] }
                             }
