@@ -159,7 +159,7 @@ export const commands = [
         options: [
             {
                 name: "position",
-                description: "Position on the list (1 - 50)",
+                description: "Position on the list",
                 required: true,
                 type: 4
             }
