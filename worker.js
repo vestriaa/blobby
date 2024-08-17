@@ -961,7 +961,7 @@ export default {
                 });
             } else if (command == "wiki") {
                 const query = json.data.options[0].value;
-                const sort = json.data.options[1].value;
+                const sort = json.data.options[1]?.value;
 
                 let wikiUrl = `https://wiki.grab-tools.live/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=1`;
                 if (sort) {
