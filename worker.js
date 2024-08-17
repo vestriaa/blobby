@@ -963,7 +963,7 @@ export default {
                 const query = json.data.options[0].value;
                 const sort = json.data.options[1]?.value;
 
-                let wikiUrl = `https://wiki.grab-tools.live/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=1`;
+                let wikiUrl = `https://wiki.grab-tools.live/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=5`;
                 if (sort) {
                     wikiUrl += `&srsort=${sort}`;
                 }
@@ -983,21 +983,24 @@ export default {
                     });
                 }
 
-                const pageTitle = wikiData?.query?.search[0]?.title || "";
-                const wikiPageUrl = `https://wiki.grab-tools.live/w/index.php?title=${encodeURIComponent(pageTitle)}`;
-
-                const snippet = wikiData?.query?.search[0]?.snippet || "";
-                const timestamp = wikiData?.query?.search[0]?.timestamp || "Error";
-                const embed = {
+                const timestamp = wikiData.query.search[0]?.timestamp || "Error";
+                let embed = {
                     type: "rich",
-                    title: pageTitle,
-                    url: wikiPageUrl,
-                    description: snippet,
+                    title: `Results for ${query}`,
+                    url: `https://wiki.grab-tools.live/wiki/Special:Search?search=${encodeURIComponent(title)}`,
+                    description: "",
                     color: 0x006b2d,
                     footer: {
                         text: timestamp
                     }
                 };
+
+                for (const result of wikiData.query.search) {
+                    const { title } = result;
+                    const pageUrl = `https://wiki.grab-tools.live/w/index.php?title=${encodeURIComponent(title)}`;
+
+                    embed.description += `[${title}](<${pageUrl}>)\n`;
+                }
 
                 return Response.json({
                     type: 4,
