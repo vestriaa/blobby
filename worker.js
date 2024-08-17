@@ -959,6 +959,55 @@ export default {
                         allowed_mentions: { parse: [] }
                     }
                 });
+            } else if (command == "wiki") {
+                const query = json.data.options[0].value;
+                const sort = json.data.options[1].value;
+
+                const wikiUrl = `https://wiki.grab-tools.live/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=1`;
+                if (sort) {
+                    wikiUrl += `&srsort=${sort}`;
+                }
+
+                const wikiResponse = await fetch(wikiUrl);
+                const wikiData = await wikiResponse.json();
+
+                if (wikiData?.query?.search?.length == 0) {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "No results found",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+
+                const pageTitle = wikiData?.query?.search[0]?.title || "";
+                const wikiPageUrl = `https://wiki.grab-tools.live/w/index.php?title=${encodeURIComponent(pageTitle)}`;
+
+                const snippet = wikiData?.query?.search[0]?.snippet || "";
+                const timestamp = wikiData?.query?.search[0]?.timestamp || "Error";
+                const embed = {
+                    type: "rich",
+                    title: pageTitle,
+                    url: wikiPageUrl,
+                    description: snippet,
+                    color: 0x006b2d,
+                    footer: {
+                        text: timestamp
+                    }
+                };
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: "",
+                        embeds: [embed],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             } else if (command == "Get leaderboard") {
                 const message = json.data.resolved.messages[json.data.target_id];
                 const matches = /\?level=([^\s>)&]+)/g.exec(message.content);

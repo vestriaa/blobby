@@ -212,6 +212,68 @@ export const commands = [
         ]
     },
     {
+        name: "wiki",
+        description: "Search the wiki",
+        options: [
+            {
+                name: "query",
+                description: "Search query",
+                required: true,
+                type: 3
+            },
+            {
+                name: "sort",
+                description: "Sorting order (default is relevance)",
+                required: false,
+                type: 3,
+                choices: [
+                    {
+                        name: "Random",
+                        value: "random"
+                    },
+                    {
+                        name: "Incoming links",
+                        value: "incoming_links_asc"
+                    },
+                    {
+                        name: "Relevance (default)",
+                        value: "relevance"
+                    },
+                    {
+                        name: "Creation date",
+                        value: "create_timestamp_asc"
+                    },
+                    {
+                        name: "None",
+                        value: "none"
+                    },
+                    {
+                        name: "Just Match",
+                        value: "just_match"
+                    },
+                    {
+                        name: "Last edit",
+                        value: "last_edit_asc"
+                    },
+                    {
+                        name: "Creation date reverse",
+                        value: "create_timestamp_desc"
+                    },
+                    {
+                        name: "Incoming links reverse",
+                        value: "incoming_links_desc"
+                    },
+                    {
+                        name: "Last edit reverse",
+                        value: "last_edit_desc"
+                    }
+                ]
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
         name: "Get leaderboard",
         type: 3,
         integration_types: [0, 1],
@@ -240,7 +302,7 @@ export const commands = [
         type: 3,
         integration_types: [0, 1],
         contexts: [0, 1, 2]
-    },
+    }
     // {
     //     name: "Add to fanart",
     //     type: 3,
