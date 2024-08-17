@@ -220,7 +220,7 @@ export const commands = [
                 description: "Search query",
                 required: true,
                 type: 3
-            },
+            },/*
             {
                 name: "sort",
                 description: "Sorting order (default is relevance)",
@@ -268,7 +268,7 @@ export const commands = [
                         value: "last_edit_desc"
                     }
                 ]
-            }
+            }*/
         ],
         integration_types: [0, 1],
         contexts: [0, 1, 2]
