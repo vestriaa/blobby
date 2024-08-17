@@ -987,7 +987,7 @@ export default {
                 let embed = {
                     type: "rich",
                     title: `Results for ${query}`,
-                    url: `https://wiki.grab-tools.live/wiki/Special:Search?search=${encodeURIComponent(title)}`,
+                    url: `https://wiki.grab-tools.live/wiki/Special:Search?search=${encodeURIComponent(query)}`,
                     description: "",
                     color: 0x006b2d,
                     footer: {
