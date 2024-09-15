@@ -743,7 +743,8 @@ export default {
                     const listData = JSON.parse(list);
 
                     let positionInput = json.data.options[0].value;
-                    
+                    positionInput == 0 ? positionInput = 1 : {}
+
                     if (typeof positionInput == "string" && positionInput.includes("?level=")) {
                         let id = positionInput.split("?level=")[1].split("&")[0];
                         for (let i = 0; i < listData.length; i++) {
@@ -752,24 +753,23 @@ export default {
                                 break;
                             }
                         }
-                    } else {
-                        let position = positionInput - 1;
-                        const level = listData[position];
-                        return Response.json({
-                            type: 4,
-                            data: {
-                                tts: false,
-                                content: "",
-                                embeds: [{
-                                    title: `#${position + 1} Hardest Level`,
-                                    description: `**${level.title}** by ${level.creator}`,
-                                    url: `https://grabvr.quest/levels/viewer/?level=${level.id || ""}`,
-                                    color: 0xff0000
-                                }],
-                                allowed_mentions: { parse: [] }
-                            }
-                        });
                     }
+                    let position = positionInput - 1;
+                    const level = listData[position];
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "",
+                            embeds: [{
+                                title: `#${position + 1} Hardest Level`,
+                                description: `**${level.title}** by ${level.creator}`,
+                                url: `https://grabvr.quest/levels/viewer/?level=${level.id || ""}`,
+                                color: 0xff0000
+                            }],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
                 }
             } else if (command == "hardest") {
                 const func = json.data.options[0].value;
