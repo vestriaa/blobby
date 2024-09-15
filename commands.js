@@ -155,12 +155,18 @@ export const commands = [
     },
     {
         name: "gethardest",
-        description: "Get the nth level on the Hardest Levels List",
+        description: "Get the nth level on the Hardest Levels List or a levels location",
         options: [
             {
                 name: "position",
                 description: "Position on the list",
-                required: true,
+                required: false,
+                type: 4
+            },
+            {
+                name: "url",
+                description: "level url",
+                required: false,
                 type: 4
             }
         ]
