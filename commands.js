@@ -167,7 +167,7 @@ export const commands = [
                 name: "url",
                 description: "level url",
                 required: false,
-                type: 4
+                type: 3
             }
         ]
     },
