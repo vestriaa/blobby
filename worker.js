@@ -6,7 +6,6 @@ export default {
         return {
             "type": "rich",
             "title": `${level.title}`,
-            "description": `${level.description}`,
             "color": 0x618dc3,
             "fields": fields,
             "thumbnail": {
@@ -15,7 +14,7 @@ export default {
                 "width": 512
             },
             "author": {
-                "name": `${this.getFeaturedName(id) || level.creators ? level.creators[0] : ''}`,
+                "name": `${this.getFeaturedName(level.identifier.split(":")[0]) || level.creators ? level.creators[0] : ''}`,
                 "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`,
             },
             "url": `https://grab-tools.live/stats`
