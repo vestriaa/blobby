@@ -15,7 +15,7 @@ export default {
                 "width": 512
             },
             "author": {
-                "name": `${level.creator}`,
+                "name": `${this.getFeaturedName(id) || level.creators ? level.creators[0] : ''}`,
                 "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`,
             },
             "url": `https://grab-tools.live/stats`
@@ -104,6 +104,18 @@ export default {
         const data = await response.json();
         const trending = data.sort((a, b) => b.change - a.change).slice(0, 200);
         return trending;
+    },
+
+    async getFeaturedName(id) {
+        await fetch('https://grab-tools.live/stats_data/featured_creators.json')
+        .then(r => r.json()).then(data => {
+            for (let featured_creator of data || []) {
+                if (featured_creator.list_key.split(":")[1] == id) {
+                    return featured_creator.title;
+                }
+            }
+        });
+        return undefined;
     },
 
     async fetch(request, env, ctx) {
