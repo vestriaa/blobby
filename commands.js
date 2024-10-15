@@ -315,25 +315,25 @@ export const commands = [
         options: [
             {
                 name: "filter",
-                description: " ",
+                description: "the filter",
                 required: false,
                 type: 3
             },
             {
                 name: "sort",
-                description: " ",
+                description: "the sort key",
                 required: false,
                 type: 3
             },
             {
                 name: "limit",
-                description: " ",
+                description: "the limit",
                 required: false,
                 type: 4
             },
             {
                 name: "return",
-                description: " ",
+                description: "the return value",
                 required: false,
                 type: 3
             }
