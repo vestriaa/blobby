@@ -1350,9 +1350,9 @@ export default {
                 }
 
                 const filterer = json.data.options[0].value; // "level.change > 1000" // props op value // multiple with &&
-                const sorter = json.data.options[1].value; // "level.change" // props
-                const limiter = json.data.options[2].value; // 20 // integer
-                const returner = json.data.options[3].value; // "level.title" // props // multiple with &&
+                // const sorter = json.data.options[1].value; // "level.change" // props
+                const limiter = json.data.options[1].value; // 20 // integer
+                const returner = json.data.options[2].value; // "level.title" // props // multiple with &&
 
                 const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
                 const data = await response.json();
@@ -1426,12 +1426,12 @@ export default {
                                     valid = false;
                                 }
                                 break;
-                            case "contains":
+                            case "includes":
                                 if (!prop.includes(compare)) {
                                     valid = false;
                                 }
                                 break;
-                            case "!contains":
+                            case "!includes":
                                 if (prop.includes(compare)) {
                                     valid = false;
                                 }
