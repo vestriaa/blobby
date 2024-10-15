@@ -1373,7 +1373,7 @@ export default {
                             compare += ' ' + parts[i];
                         }
 
-                        anyCase = false;
+                        let anyCase = false;
                         if (operator.charAt(0) == "~") {
                             operator = operator.replace("~", "");
                             compare = compare.toLowerCase();
