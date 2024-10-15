@@ -30,7 +30,7 @@ async function registerCommands() {
         console.log('Registered commands');
     } else {
         console.error('Error registering commands');
-        const text = await response.text();
+        const text = await response.json();
         console.error(text);
     }
 }
