@@ -1376,6 +1376,7 @@ export default {
                         anyCase = false;
                         if (operator.charAt(0) == "~") {
                             operator = operator.replace("~", "");
+                            compare = compare.toLowerCase();
                             anyCase = true;
                         }
 
@@ -1386,10 +1387,7 @@ export default {
                                 compare = parseInt(compare, 10);
                             }
                         } else {
-                            compare = compare.replaceAll("\"", "")
-                            if (anyCase) {
-                                compare = compare.toLowerCase();
-                            }
+                            compare = compare.replaceAll("\"", "");
                         }
 
                         let prop = level;
