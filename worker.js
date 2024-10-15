@@ -1368,6 +1368,11 @@ export default {
                         
                         const operator = parts[1];
                         let compare = parts[2];
+
+                        for (let i = 3; i < parts.length; i++) {
+                            compare += ' ' + parts[i];
+                        }
+
                         if (!compare.includes("\"")) {
                             if (operator.includes(".")) {
                                 compare = parseFloat(compare)
