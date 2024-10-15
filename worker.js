@@ -1439,8 +1439,7 @@ export default {
                                 }
                                 break;
                             default:
-                                console.error(`Invalid operator: ${operator}`);
-                                valid = false;
+                                break;
                         }
                     });
                     
@@ -1475,7 +1474,7 @@ export default {
                     type: 4,
                     data: {
                         tts: false,
-                        content: result,
+                        content: "```\n" + result + "```",
                         embeds: [],
                         allowed_mentions: { parse: [] }
                     }
