@@ -1349,17 +1349,100 @@ export default {
                     });
                 }
 
-                const filterer = json.data.options[0].value; // "level.change > 1000"
-                const sorter = json.data.options[1].value; // "level.change"
-                const limiter = json.data.options[2].value; // 20
-                const returner = json.data.options[3].value; // "level.title"
+                const filterer = json.data.options[0].value; // "level.change > 1000" // props op value // multiple with &&
+                const sorter = json.data.options[1].value; // "level.change" // props
+                const limiter = json.data.options[2].value; // 20 // integer
+                const returner = json.data.options[3].value; // "level.title" // props // multiple with &&
 
                 const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
                 const data = await response.json();
 
                 const filtered = [];
                 for (let level of data) {
-                    if (eval(filterer)) {
+                    let valid = true;
+
+                    filterer.split("&&").forEach(c => {
+                        const value = c.trim()
+                        const parts = value.split(" ");
+                        const properties = parts[0].remove("level.").split(".");
+                        
+                        const operator = parts[1];
+                        let compare = parts[2];
+                        if (!compare.includes("\"")) {
+                            if (operator.includes(".")) {
+                                compare = parseFloat(compare)
+                            } else {
+                                compare = parseInt(compare, 10);
+                            }
+                        }
+
+                        let prop = level;
+                        for (let key of properties) {
+                            prop = prop[key];
+                            if (prop === undefined) {
+                                valid = false;
+                                break;
+                            }
+                        }
+
+                        switch (operator) {
+                            case ">":
+                                if (prop <= compare) {
+                                    valid = false;
+                                }
+                                break;
+                            case "<":
+                                if (prop >= compare) {
+                                    valid = false;
+                                }
+                                break;
+                            case ">=":
+                                if (prop < compare) {
+                                    valid = false;
+                                }
+                                break;
+                            case "<=":
+                                if (prop > compare) {
+                                    valid = false;
+                                }
+                                break;
+                            case "==":
+                                if (prop != compare) {
+                                    valid = false;
+                                }
+                                break;
+                            case "!=":
+                                if (prop == compare) {
+                                    valid = false;
+                                }
+                                break;
+                            case "in":
+                                if (!compare.includes(prop)) {
+                                    valid = false;
+                                }
+                                break;
+                            case "!in":
+                                if (compare.includes(prop)) {
+                                    valid = false;
+                                }
+                                break;
+                            case "contains":
+                                if (!prop.includes(compare)) {
+                                    valid = false;
+                                }
+                                break;
+                            case "!contains":
+                                if (prop.includes(compare)) {
+                                    valid = false;
+                                }
+                                break;
+                            default:
+                                console.error(`Invalid operator: ${operator}`);
+                                valid = false;
+                        }
+                    });
+                    
+                    if (valid) {
                         level.link = `https://grabvr.quest/levels/viewer/${level.identifier}`;
                         filtered.push(level);
                         if (filtered.length >= limiter) {
@@ -1367,8 +1450,23 @@ export default {
                         }
                     }
                 }
-                filtered.sort((a, b) => eval(`${sorter.replaceAll("level.", "a.")}`) - eval(`${sorter.replaceAll("level.", "b.")}`));
-                filtered.map(level => { return eval(returner); });
+                filtered.map(level => { 
+                    let returnValue = "";
+                    returner.split("&&").forEach(c => {
+                        const properties = c.remove("level.").split(".");
+                        let prop = level;
+                        for (let key of properties) {
+                            prop = prop[key];
+                            if (prop == undefined) {
+                                break;
+                            }
+                        }
+                        if (prop != undefined) {
+                            returnValue += prop + " ";
+                        }
+                    });
+                    return returnValue;
+                });
 
                 return Response.json({
                     type: 4,
