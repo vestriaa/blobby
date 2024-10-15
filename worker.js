@@ -1450,7 +1450,8 @@ export default {
                         }
                     }
                 }
-                filtered.map(level => { 
+                let result = "";
+                filtered.forEach(level => { 
                     let returnValue = "";
                     returner.split("&&").forEach(c => {
                         const properties = c.replace("level.", "").split(".");
@@ -1465,14 +1466,14 @@ export default {
                             returnValue += prop + " ";
                         }
                     });
-                    c = returnValue;
+                    result += returnValue + "\n";
                 });
 
                 return Response.json({
                     type: 4,
                     data: {
                         tts: false,
-                        content: filtered.join("\n"),
+                        content: result,
                         embeds: [],
                         allowed_mentions: { parse: [] }
                     }
