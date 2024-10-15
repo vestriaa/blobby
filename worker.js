@@ -1380,7 +1380,7 @@ export default {
                                 compare = parseInt(compare, 10);
                             }
                         } else {
-                            compare.replaceAll("\"", "")
+                            compare = compare.replaceAll("\"", "")
                         }
 
                         let prop = level;
