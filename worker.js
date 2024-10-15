@@ -1336,6 +1336,49 @@ export default {
                     const url = attachment.url;
                 }
 
+            } else if (command == "script") {
+                if (json.member.user.id !== indexUserId) {
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Nuh uh",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
+                }
+
+                const filterer = json.data.options[0].value; // "level.change > 1000"
+                const sorter = json.data.options[1].value; // "level.change"
+                const limiter = json.data.options[2].value; // 20
+                const returner = json.data.options[3].value; // "level.title"
+
+                const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
+                const data = await response.json();
+
+                const filtered = [];
+                for (let level of data) {
+                    if (eval(filterer)) {
+                        level.link = `https://grabvr.quest/levels/viewer/${level.identifier}`;
+                        filtered.push(level);
+                        if (filtered.length >= limiter) {
+                            break;
+                        }
+                    }
+                }
+                filtered.sort((a, b) => eval(`${sorter.replaceAll("level.", "a.")}`) - eval(`${sorter.replaceAll("level.", "b.")}`));
+                filtered.map(level => { return eval(returner); });
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: filtered.join("\n"),
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
             }
         }
 

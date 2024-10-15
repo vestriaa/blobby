@@ -308,6 +308,34 @@ export const commands = [
         type: 3,
         integration_types: [0, 1],
         contexts: [0, 1, 2]
+    },
+    {
+        name: "script",
+        description: "get levels data",
+        options: [
+            {
+                name: "filter",
+                required: false,
+                type: 3
+            },
+            {
+                name: "sort",
+                required: false,
+                type: 3
+            },
+            {
+                name: "limit",
+                required: false,
+                type: 4
+            },
+            {
+                name: "return",
+                required: false,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     }
     // {
     //     name: "Add to fanart",
