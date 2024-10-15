@@ -1373,14 +1373,23 @@ export default {
                             compare += ' ' + parts[i];
                         }
 
+                        anyCase = false;
+                        if (operator.charAt(0) == "~") {
+                            operator = operator.replace("~", "");
+                            anyCase = true;
+                        }
+
                         if (!compare.includes("\"")) {
-                            if (operator.includes(".")) {
+                            if (compare.includes(".")) {
                                 compare = parseFloat(compare)
                             } else {
                                 compare = parseInt(compare, 10);
                             }
                         } else {
                             compare = compare.replaceAll("\"", "")
+                            if (anyCase) {
+                                compare = compare.toLowerCase();
+                            }
                         }
 
                         let prop = level;
@@ -1390,6 +1399,10 @@ export default {
                                 valid = false;
                                 break;
                             }
+                        }
+
+                        if (anyCase && typeof prop == String) {
+                            prop = prop.toLowerCase();
                         }
 
                         switch (operator) {
@@ -1450,6 +1463,9 @@ export default {
                     
                     if (valid) {
                         level.link = `https://grabvr.quest/levels/viewer/${level.identifier}`;
+                        level.creator = level.creators && level.creators.length > 0 ? level.creators[0] : '';
+                        level.creator_link = `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`;
+                        level.date = new Date(1000 * (level.update_timestamp || level.creation_timestamp || 0)).toDateString();
                         filtered.push(level);
                         if (filtered.length >= limiter) {
                             break;
