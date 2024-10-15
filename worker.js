@@ -1366,7 +1366,7 @@ export default {
                         const parts = value.split(" ");
                         const properties = parts[0].replace("level.", "").split(".");
                         
-                        const operator = parts[1];
+                        let operator = parts[1];
                         let compare = parts[2];
 
                         for (let i = 3; i < parts.length; i++) {
