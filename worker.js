@@ -1364,7 +1364,7 @@ export default {
                     filterer.split("&&").forEach(c => {
                         const value = c.trim()
                         const parts = value.split(" ");
-                        const properties = parts[0].remove("level.").split(".");
+                        const properties = parts[0].replace("level.", "").split(".");
                         
                         const operator = parts[1];
                         let compare = parts[2];
@@ -1453,7 +1453,7 @@ export default {
                 filtered.map(level => { 
                     let returnValue = "";
                     returner.split("&&").forEach(c => {
-                        const properties = c.remove("level.").split(".");
+                        const properties = c.replace("level.", "").split(".");
                         let prop = level;
                         for (let key of properties) {
                             prop = prop[key];
