@@ -1401,7 +1401,7 @@ export default {
                             }
                         }
 
-                        if (anyCase && typeof prop == String) {
+                        if (anyCase && typeof prop == "string") {
                             prop = prop.toLowerCase();
                         }
 
