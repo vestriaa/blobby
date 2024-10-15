@@ -1465,7 +1465,7 @@ export default {
                             returnValue += prop + " ";
                         }
                     });
-                    return returnValue;
+                    c = returnValue;
                 });
 
                 return Response.json({
