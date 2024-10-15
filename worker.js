@@ -1474,16 +1474,20 @@ export default {
                 filtered.forEach(level => { 
                     let returnValue = "";
                     returner.split("&&").forEach(c => {
-                        const properties = c.trim().replace("level.", "").split(".");
-                        let prop = level;
-                        for (let key of properties) {
-                            prop = prop[key];
-                            if (prop == undefined) {
-                                break;
+                        if (c.includes("\"")) {
+                            returnValue += c.trim().replaceAll("\"", "").replaceAll("\\n", "\n");
+                        } else {
+                            const properties = c.trim().replace("level.", "").split(".");
+                            let prop = level;
+                            for (let key of properties) {
+                                prop = prop[key];
+                                if (prop == undefined) {
+                                    break;
+                                }
                             }
-                        }
-                        if (prop != undefined) {
-                            returnValue += prop + " ";
+                            if (prop != undefined) {
+                                returnValue += prop + " ";
+                            }
                         }
                     });
                     result += returnValue + "\n";
