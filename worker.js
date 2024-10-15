@@ -1374,6 +1374,8 @@ export default {
                             } else {
                                 compare = parseInt(compare, 10);
                             }
+                        } else {
+                            compare.replaceAll("\"", "")
                         }
 
                         let prop = level;
@@ -1454,7 +1456,7 @@ export default {
                 filtered.forEach(level => { 
                     let returnValue = "";
                     returner.split("&&").forEach(c => {
-                        const properties = c.replace("level.", "").split(".");
+                        const properties = c.trim().replace("level.", "").split(".");
                         let prop = level;
                         for (let key of properties) {
                             prop = prop[key];
