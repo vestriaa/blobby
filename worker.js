@@ -345,7 +345,7 @@ export default {
                 const levelCount = userData.user_level_count || 0;
                 const primaryColor = userData?.active_customizations?.player_color_primary?.color || [0, 0, 0];
                 
-                const levelSearch = `${API_URL}list?max_format_version=9&user_id=${userID}`;
+                const levelSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}&user_id=${userID}`;
                 const levelResponse = await fetch(levelSearch);
                 const levelData = await levelResponse.json();
 
@@ -562,13 +562,13 @@ export default {
                 let levelSearch;
                 if (json?.data?.options && json.data.options.length > 0 && json.data.options[0]?.value) {
                     const queryCreator = json.data.options[0].value;
-                    const userSearch = `${API_URL}list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
+                    const userSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}&type=user_name&search_term=${queryCreator}`;
                     const searchResponse = await fetch(userSearch);
                     const searchData = await searchResponse.json();
                     if(searchData.length >= 1) {
                         const user = searchData[0];
                         const userId = user.user_id;
-                        levelSearch = `${API_URL}list?max_format_version=9&user_id=${userId}`;
+                        levelSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}&user_id=${userId}`;
                     } else {
                         return Response.json({
                             type: 4,
@@ -581,7 +581,7 @@ export default {
                         });
                     }
                 } else {
-                    levelSearch = `${API_URL}list?max_format_version=9`;
+                    levelSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}`;
                 }
                 const levelResponse = await fetch(levelSearch);
                 const levelData = await levelResponse.json();
@@ -609,13 +609,13 @@ export default {
                 }
             } else if (command == "oldest") {
                 const queryCreator = json.data.options[0].value;
-                const userSearch = `${API_URL}list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
+                const userSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}&type=user_name&search_term=${queryCreator}`;
                 const searchResponse = await fetch(userSearch);
                 const searchData = await searchResponse.json();
                 if(searchData.length >= 1) {
                     const user = searchData[0];
                     const userId = user.user_id;
-                    const levelSearch = `${API_URL}list?max_format_version=9&user_id=${userId}`;
+                    const levelSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}&user_id=${userId}`;
                     const levelResponse = await fetch(levelSearch);
                     const levelData = await levelResponse.json();
                     if (levelData.length >= 1) {
