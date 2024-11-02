@@ -894,7 +894,15 @@ export default {
                 const wikiResponse = await fetch(wikiUrl);
                 const text = await wikiResponse.text();
                 if (text.charAt(0) == "<") {
-                    throw new Error(text);
+                    return Response.json({
+                        type: 4,
+                        data: {
+                            tts: false,
+                            content: "Weird wiki bug :c\nDon't bother trying the command again lol",
+                            embeds: [],
+                            allowed_mentions: { parse: [] }
+                        }
+                    });
                 }
                 const wikiData = await wikiResponse.json();
 
