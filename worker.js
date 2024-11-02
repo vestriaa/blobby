@@ -75,7 +75,7 @@ export default {
                     }
                 });
             } else if (command == "trending") {
-                const levelData = await this.getTrendingLevels();
+                const levelData = await getTrendingLevels();
                 const top5 = levelData.slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
@@ -96,7 +96,7 @@ export default {
                     }
                 });
             } else if (command == "actualtrending") {
-                const levelData = await this.getTrendingLevels();
+                const levelData = await getTrendingLevels();
                 const top5 = levelData.filter((level) => level.identifier !== "29t798uon2urbra1f8w2q:1693775768" && level.title.toLowerCase().indexOf("yoohoo") == -1 && level.title.toLowerCase().indexOf("diff") == -1).slice(0, 5);
                 let description = [];
                 top5.forEach((level, index) => {
@@ -117,7 +117,7 @@ export default {
                     }
                 });
             } else if (command == "toptrending") {
-                const levelData = await this.getTrendingLevels();
+                const levelData = await getTrendingLevels();
                 const level = levelData[0];
                 const fields = [
                     {
@@ -135,7 +135,7 @@ export default {
                     data: {
                         tts: false,
                         content: "",
-                        embeds: [await this.generateLevelEmbed(level, fields)],
+                        embeds: [await generateLevelEmbed(level, fields)],
                         allowed_mentions: { parse: [] }
                     }
                 });
@@ -155,7 +155,7 @@ export default {
                     data: {
                         tts: false,
                         content: "",
-                        embeds: [await this.generateLevelEmbed(level, fields)],
+                        embeds: [await generateLevelEmbed(level, fields)],
                         allowed_mentions: { parse: [] }
                     }
                 });
@@ -175,7 +175,7 @@ export default {
                     data: {
                         tts: false,
                         content: "",
-                        embeds: [await this.generateLevelEmbed(level, fields)],
+                        embeds: [await generateLevelEmbed(level, fields)],
                         allowed_mentions: { parse: [] }
                     }
                 });
@@ -214,7 +214,7 @@ export default {
                 const embeds = [{
                     "type": "rich",
                     "title": `Global Stats`,
-                    "description": `**Total plays:** ${this.numberWithCommas(globalStats.plays)}\n**Verified maps:** ${this.numberWithCommas(globalStats.verified_maps)}\n**Todays plays:** ${this.numberWithCommas(globalStats.todays_plays)}\n**Total complexity:** ${this.numberWithCommas(globalStats.complexity)}\n**Iterations:** ${this.numberWithCommas(globalStats.iterations)}\n**Average difficulty:** ${Math.round(globalStats.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(globalStats.average_plays*100)/100)}\n**Average likes:** ${Math.round(globalStats.average_likes*100)}%\n**Average time:** ${Math.round(globalStats.average_time*100)/100}s\n**Average complexity:** ${this.numberWithCommas(Math.round(globalStats.average_complexity*100)/100)}`,
+                    "description": `**Total plays:** ${numberWithCommas(globalStats.plays)}\n**Verified maps:** ${numberWithCommas(globalStats.verified_maps)}\n**Todays plays:** ${numberWithCommas(globalStats.todays_plays)}\n**Total complexity:** ${numberWithCommas(globalStats.complexity)}\n**Iterations:** ${numberWithCommas(globalStats.iterations)}\n**Average difficulty:** ${Math.round(globalStats.average_difficulty*100)}%\n**Average plays:** ${numberWithCommas(Math.round(globalStats.average_plays*100)/100)}\n**Average likes:** ${Math.round(globalStats.average_likes*100)}%\n**Average time:** ${Math.round(globalStats.average_time*100)/100}s\n**Average complexity:** ${numberWithCommas(Math.round(globalStats.average_complexity*100)/100)}`,
                     "color": 0x618dc3,
                     "fields": [],
                     "url": STATS_URL + "/stats?tab=Global"
@@ -231,7 +231,7 @@ export default {
             } else if (command == "leaderboard") {
                 const queryTitle = json.data.options[0].value;
                 const queryCreator = json.data.options.length > 1 ? json.data.options[1].value : '';
-                const levelData = await this.getLevel(queryTitle, queryCreator);
+                const levelData = await getLevel(queryTitle, queryCreator);
                 
                 if(levelData) {
                     const levelID = levelData.identifier;
@@ -247,7 +247,7 @@ export default {
                         }
                     });
                     for(let i = 0; i < Math.min(10, leaderboardData.length); i++) {
-                        description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${this.formatTime(leaderboardData[i].best_time, maxDecimals)}`);
+                        description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${formatTime(leaderboardData[i].best_time, maxDecimals)}`);
                     }
                     return Response.json({
                         type: 4,
@@ -279,7 +279,7 @@ export default {
             } else if (command == "level") {
                 const queryTitle = json.data.options[0].value;
                 const queryCreator = json.data.options.length > 1 ? json.data.options[1].value : '';
-                const levelData = await this.getLevel(queryTitle, queryCreator);
+                const levelData = await getLevel(queryTitle, queryCreator);
                 
                 if(levelData) {
                     const url = LEVEL_URL + levelData.identifier;
@@ -305,7 +305,7 @@ export default {
                 }
             } else if (command == "id") {
                 const queryUsername = json.data.options[0].value;
-                const userData = await this.getPlayerDetails(queryUsername);
+                const userData = await getPlayerDetails(queryUsername);
                 if (!userData) {
                     return Response.json({
                         type: 4,
@@ -328,7 +328,7 @@ export default {
                 });
             } else if (command == "player") {
                 const queryUsername = json.data.options[0].value;
-                const userData = await this.getPlayerDetails(queryUsername);
+                const userData = await getPlayerDetails(queryUsername);
                 if (!userData) {
                     return Response.json({
                         type: 4,
@@ -389,7 +389,7 @@ export default {
                     statistics.average_plays = statistics.plays / statistics.maps;
                 }
 
-                const primaryColorAsHex = `${this.colorComponentToHex(primaryColor[0])}${this.colorComponentToHex(primaryColor[1])}${this.colorComponentToHex(primaryColor[2])}`;
+                const primaryColorAsHex = `${colorComponentToHex(primaryColor[0])}${colorComponentToHex(primaryColor[1])}${colorComponentToHex(primaryColor[2])}`;
 
                 return Response.json({
                     type: 4,
@@ -399,7 +399,7 @@ export default {
                         embeds: [{
                             "type": "rich",
                             "title": `${userName}'s stats`,
-                            "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** <t:${unixTime}>\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
+                            "description": `**Level Count:** ${numberWithCommas(levelCount)}\n**Join Date:** <t:${unixTime}>\n**Verified maps:** ${numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${numberWithCommas(statistics.plays)}\n**Verified plays:** ${numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
                             "color": parseInt(primaryColorAsHex, 16),
                             "fields": [],
                             "url": PLAYER_URL + userID
@@ -409,7 +409,7 @@ export default {
                 });
             } else if (command == "whois") {
                 const queryUsername = json.data.options[0].value;
-                const userData = await this.getPlayerDetails(queryUsername);
+                const userData = await getPlayerDetails(queryUsername);
                 if (!userData) {
                     return Response.json({
                         type: 4,
@@ -500,8 +500,8 @@ export default {
                         if (items["checkpoint"]) {details.checkpoint = items["checkpoint"].replace("_basic", "").replace("checkpoint_", "").replaceAll("_", " ")}
                     }
                 }
-                const primaryColorAsHex = `${this.colorComponentToHex(details.primary[0])}${this.colorComponentToHex(details.primary[1])}${this.colorComponentToHex(details.primary[2])}`;
-                const secondaryColorAsHex = `${this.colorComponentToHex(details.secondary[0])}${this.colorComponentToHex(details.secondary[1])}${this.colorComponentToHex(details.secondary[2])}`;
+                const primaryColorAsHex = `${colorComponentToHex(details.primary[0])}${colorComponentToHex(details.primary[1])}${colorComponentToHex(details.primary[2])}`;
+                const secondaryColorAsHex = `${colorComponentToHex(details.secondary[0])}${colorComponentToHex(details.secondary[1])}${colorComponentToHex(details.secondary[2])}`;
                 
                 const roleKeys = Object.keys(details.roles);
                 const roles = roleKeys.map((role, index) => 
@@ -969,7 +969,7 @@ export default {
                     }
                 });
                 for(let i = 0; i < Math.min(10, leaderboardData.length); i++) {
-                    description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${this.formatTime(leaderboardData[i].best_time, maxDecimals)}`);
+                    description.push(`**${i+1}**. ${leaderboardData[i].user_name} - ${formatTime(leaderboardData[i].best_time, maxDecimals)}`);
                 }
                 return Response.json({
                     type: 4,
