@@ -1,5 +1,5 @@
-import * as CONFIG from '../config.js'
-import * as UTILS from '../utils.js'
+import CONFIG from '../config.js'
+import UTILS from '../utils.js'
 
 export async function script(json, env) {
     const filterer = json.data.options[0].value; // "level.change > 1000" // props op value // multiple with &&

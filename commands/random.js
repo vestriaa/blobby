@@ -1,5 +1,5 @@
-import * as CONFIG from '../config.js'
-import * as UTILS from '../utils.js'
+import CONFIG from '../config.js'
+import UTILS from '../utils.js'
 
 export async function random(json, env) {
     const isVerified = json.data.options[0].value;

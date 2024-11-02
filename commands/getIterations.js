@@ -1,5 +1,5 @@
-import * as CONFIG from '../config.js'
-import * as UTILS from '../utils.js'
+import CONFIG from '../config.js'
+import UTILS from '../utils.js'
 
 export async function getIterations(json, env) {
     const message = json.data.resolved.messages[json.data.target_id];

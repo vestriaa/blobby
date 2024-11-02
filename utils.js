@@ -1,6 +1,6 @@
 const nacl = require("tweetnacl");
 import { Buffer } from 'node:buffer';
-import * as CONFIG from './config.js'
+import CONFIG from './config.js'
 
 function colorComponentToHex(component) {
     const hex = Math.round(component * 255).toString(16);
@@ -138,7 +138,7 @@ function isOwner(id) {
     return id == "290oi9frh8eihrh1r5z0q"; // Slin
 }
 
-export {
+export default {
     generateLevelEmbed,
     colorComponentToHex,
     numberWithCommas,
