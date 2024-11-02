@@ -1,138 +1,42 @@
-const nacl = require("tweetnacl");
-import { Buffer } from 'node:buffer';
-import { test } from './utils.js';
+import {
+    WEBSITE_URL,
+    VIEWER_URL,
+    STATS_URL,
+    WIKI_URL,
+
+    LEVEL_URL,
+    PLAYER_URL,
+
+    API_URL,
+    IMAGES_API_URL,
+    STATS_API_URL,
+
+    FORMAT_VERSION,
+} from './config.js'
+import {
+    generateLevelEmbed,
+    colorComponentToHex,
+    numberWithCommas,
+    formatTime,
+    getPlayerDetails,
+    getLevel,
+    getTrendingLevels,
+    getFeaturedName,
+    validate,
+    isSuperMod,
+    isOwner,
+} from './utils.js';
 
 export default {
-    async generateLevelEmbed(level, fields = []) {
-        return {
-            "type": "rich",
-            "title": `${level.title}`,
-            "color": 0x618dc3,
-            "fields": fields,
-            "thumbnail": {
-                "url": `https://grab-images.slin.dev/${level?.images?.thumb?.key}`,
-                "height": 288,
-                "width": 512
-            },
-            "author": {
-                "name": `${this.getFeaturedName(level.identifier.split(":")[0]) || level.creators ? level.creators[0] : ''}`,
-                "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`,
-            },
-            "url": `https://grab-tools.live/stats`
-        }
-    },
-
-    colorComponentToHex(component) {
-        const hex = Math.round(component * 255).toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    },
-
-    numberWithCommas(x) {
-        let parts = x.toString().split(".");
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return parts.join(".");
-    },
-
-    formatTime(seconds, maxDecimals) {
-        let minutes = Math.floor(seconds / 60);
-        seconds = (seconds % 60).toFixed(maxDecimals);
-        if (minutes < 10) { minutes = "0" + minutes; }
-        if (seconds < 10) { seconds = "0" + seconds; }
-        return `${minutes}:${seconds}`;
-    },
-
-    async getPlayerDetails(query) {
-        const searchUrl = `https://api.slin.dev/grab/v1/list?type=user_name&search_term=${query}`;
-        const searchResponse = await fetch(searchUrl);
-        const searchData = await searchResponse.json();
-        if(searchData.length >= 1) {
-            // exact matches
-            for (let result of searchData) {
-                if (result.user_name == query) {
-                    return result;
-                }
-            }
-            // lowercase
-            for (let result of searchData) {
-                if (result.user_name.toLowerCase() == query.toLowerCase()) {
-                    return result;
-                }
-            }
-            // is_moderator
-            for (let result of searchData) {
-                if (result.is_moderator) {
-                    return result;
-                }
-            }
-            // is_creator
-            for (let result of searchData) {
-                if (result.is_creator) {
-                    return result;
-                }
-            }
-            // first
-            return searchData[0];
-        } else {
-            return false;
-        }
-    },
-
-    async getLevel(queryTitle, queryCreator) {
-        const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=999&type=search&search_term=${queryTitle}`;
-        const levelResponse = await fetch(levelSearch);
-        const levelData = await levelResponse.json();
-        if (queryCreator == '') {
-            return levelData[0];
-        }
-        const foundLevels = [];
-        for(const level of levelData) {
-            if("creators" in level) {
-                for(const creator of level.creators) {
-                    if(creator.toLowerCase().includes(queryCreator.toLowerCase())) {
-                        foundLevels.push(level);
-                        break;
-                    }
-                }
-            }
-        }
-        foundLevels.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))
-        return foundLevels.length > 0? foundLevels[0] : false;
-    },
-
-    async getTrendingLevels() {
-        const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
-        const data = await response.json();
-        const trending = data.sort((a, b) => b.change - a.change).slice(0, 200);
-        return trending;
-    },
-
-    async getFeaturedName(id) {
-        await fetch('https://grab-tools.live/stats_data/featured_creators.json')
-        .then(r => r.json()).then(data => {
-            for (let featured_creator of data || []) {
-                if (featured_creator.list_key.split(":")[1] == id) {
-                    return featured_creator.title;
-                }
-            }
-        });
-        return undefined;
-    },
-
     async fetch(request, env, ctx) {
 
-        const signature = request.headers.get("x-signature-ed25519");
-        const timestamp = request.headers.get("x-signature-timestamp");
-        const body = await request.text();
-        const isVerified = signature && timestamp && nacl.sign.detached.verify(
-            Buffer.from(timestamp + body),
-            Buffer.from(signature, "hex"),
-            Buffer.from(env.PUBLIC_KEY, "hex")
-        );
-
+        // validate
+        const isVerified = await validate(request, env);
         if (!isVerified) {
             return new Response("invalid request signature", {status: 401});
         }
 
+        // non-commands
         const json = JSON.parse(body);
         if (json.type == 1) {
             return Response.json({
@@ -145,7 +49,7 @@ export default {
             const hardestRoleId = "1224307852248612986";
             const command = json.data.name;
             if (command == "unbeaten") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                const levelResponse = await fetch(STATS_API_URL + "unbeaten_levels.json");
                 const levelData = await levelResponse.json();
                 const now = Date.now();
                 const description = [];
@@ -235,7 +139,7 @@ export default {
                     }
                 });
             } else if (command == "topunbeaten") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                const levelResponse = await fetch(STATS_API_URL + "unbeaten_levels.json");
                 const levelData = await levelResponse.json();
                 const level = levelData[0];
                 const fields = [
@@ -255,7 +159,7 @@ export default {
                     }
                 });
             } else if (command == "newestunbeaten") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/unbeaten_levels.json");
+                const levelResponse = await fetch(STATS_API_URL + "unbeaten_levels.json");
                 const levelData = await levelResponse.json();
                 const level = levelData[levelData.length - 1];
                 const fields = [
@@ -275,7 +179,7 @@ export default {
                     }
                 });
             } else if (command == "globalstats") {
-                const levelResponse = await fetch("https://grab-tools.live/stats_data/all_verified.json");
+                const levelResponse = await fetch(STATS_API_URL + "all_verified.json");
                 const levelData = await levelResponse.json();
                 let globalStats = {
                     "plays": 0,
@@ -312,7 +216,7 @@ export default {
                     "description": `**Total plays:** ${this.numberWithCommas(globalStats.plays)}\n**Verified maps:** ${this.numberWithCommas(globalStats.verified_maps)}\n**Todays plays:** ${this.numberWithCommas(globalStats.todays_plays)}\n**Total complexity:** ${this.numberWithCommas(globalStats.complexity)}\n**Iterations:** ${this.numberWithCommas(globalStats.iterations)}\n**Average difficulty:** ${Math.round(globalStats.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(globalStats.average_plays*100)/100)}\n**Average likes:** ${Math.round(globalStats.average_likes*100)}%\n**Average time:** ${Math.round(globalStats.average_time*100)/100}s\n**Average complexity:** ${this.numberWithCommas(Math.round(globalStats.average_complexity*100)/100)}`,
                     "color": 0x618dc3,
                     "fields": [],
-                    "url": `https://grab-tools.live/stats?tab=Global`
+                    "url": STATS_URL + "/stats?tab=Global"
                 }];
                 return Response.json({
                     type: 4,
@@ -330,7 +234,7 @@ export default {
                 
                 if(levelData) {
                     const levelID = levelData.identifier;
-                    const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
+                    const leaderboardUrl = `${API_URL}statistics_top_leaderboard/${levelID.replace(":", "/")}`;
                     const leaderboardResponse = await fetch(leaderboardUrl);
                     const leaderboardData = await leaderboardResponse.json();
                     let description = [];
@@ -355,7 +259,7 @@ export default {
                                 "description": description.join("\n"),
                                 "color": 0x618dc3,
                                 "fields": [],
-                                "url": `https://grabvr.quest/levels/viewer/?level=${levelID}`
+                                "url": LEVEL_URL + levelID
                             }],
                             allowed_mentions: { parse: [] }
                         }
@@ -377,7 +281,7 @@ export default {
                 const levelData = await this.getLevel(queryTitle, queryCreator);
                 
                 if(levelData) {
-                    const url = `https://grabvr.quest/levels/viewer?level=${levelData.identifier}`;
+                    const url = LEVEL_URL + levelData.identifier;
                     return Response.json({
                         type: 4,
                         data: {
@@ -440,7 +344,7 @@ export default {
                 const levelCount = userData.user_level_count || 0;
                 const primaryColor = userData?.active_customizations?.player_color_primary?.color || [0, 0, 0];
                 
-                const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userID}`;
+                const levelSearch = `${API_URL}list?max_format_version=9&user_id=${userID}`;
                 const levelResponse = await fetch(levelSearch);
                 const levelData = await levelResponse.json();
 
@@ -497,7 +401,7 @@ export default {
                             "description": `**Level Count:** ${this.numberWithCommas(levelCount)}\n**Join Date:** <t:${unixTime}>\n**Verified maps:** ${this.numberWithCommas(statistics.verified_maps)}\n**Total plays:** ${this.numberWithCommas(statistics.plays)}\n**Verified plays:** ${this.numberWithCommas(statistics.verified_plays)}\n**Total complexity:** ${this.numberWithCommas(statistics.complexity)}\n**Average difficulty:** ${Math.round(statistics.average_difficulty*100)}%\n**Average plays:** ${this.numberWithCommas(Math.round(statistics.average_plays*100)/100)}\n**Average likes:** ${Math.round(statistics.average_likes*100)}%\n**Average time:** ${Math.round(statistics.average_time*100)/100}s`,
                             "color": parseInt(primaryColorAsHex, 16),
                             "fields": [],
-                            "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`
+                            "url": PLAYER_URL + userID
                         }],
                         allowed_mentions: { parse: [] }
                     }
@@ -565,12 +469,9 @@ export default {
                 if (player.is_verifier) { details.roles.verifier = true; }
                 if (player.is_creator) { details.roles.creator = true; }
                 if (player.is_moderator) { details.roles.moderator = true; }
-                if ([
-                    "29sgp24f1uorbc6vq8d2k", // dotindex
-                    "2ak0ysv35egakgfilswpy" // EBSpark
-                ].includes(player.user_id)) { details.roles.super_mod = true; }
+                if (isSuperMod(player.user_id)) { details.roles.super_mod = true; }
                 if (player.is_admin) { details.roles.admin = true; }
-                if (player.user_id == "290oi9frh8eihrh1r5z0q") { details.roles.owner = true; } // Slin
+                if (isOwner(player.user_id)) { details.roles.owner = true; }
 
                 if (player.active_customizations) {
                     if (player.active_customizations?.player_color_primary?.color) {
@@ -632,7 +533,7 @@ export default {
                                 `**Checkpoint:** ${details.checkpoint}`,
                             "color": parseInt(primaryColorAsHex, 16),
                             "fields": [],
-                            "url": `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`,
+                            "url": PLAYER_URL + userID,
                             "footer": {
                                 "text": roles.join(" | ")
                             }
@@ -642,11 +543,11 @@ export default {
                 });
             } else if (command == "random") {
                 const isVerified = json.data.options[0].value;
-                let levelUrl = "https://api.slin.dev/grab/v1/get_random_level";
+                let levelUrl = API_URL + "get_random_level";
                 if (isVerified) {levelUrl += "?type=ok"}
                 const levelResponse = await fetch(levelUrl);
                 const levelData = await levelResponse.json();
-                const url = `https://grabvr.quest/levels/viewer?level=${levelData.identifier}`;
+                const url = LEVEL_URL + levelData.identifier;
                 return Response.json({
                     type: 4,
                     data: {
@@ -660,13 +561,13 @@ export default {
                 let levelSearch;
                 if (json?.data?.options && json.data.options.length > 0 && json.data.options[0]?.value) {
                     const queryCreator = json.data.options[0].value;
-                    const userSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
+                    const userSearch = `${API_URL}list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
                     const searchResponse = await fetch(userSearch);
                     const searchData = await searchResponse.json();
                     if(searchData.length >= 1) {
                         const user = searchData[0];
                         const userId = user.user_id;
-                        levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userId}`;
+                        levelSearch = `${API_URL}list?max_format_version=9&user_id=${userId}`;
                     } else {
                         return Response.json({
                             type: 4,
@@ -679,7 +580,7 @@ export default {
                         });
                     }
                 } else {
-                    levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9`;
+                    levelSearch = `${API_URL}list?max_format_version=9`;
                 }
                 const levelResponse = await fetch(levelSearch);
                 const levelData = await levelResponse.json();
@@ -689,7 +590,7 @@ export default {
                         type: 4,
                         data: {
                             tts: false,
-                            content: `https://grabvr.quest/levels/viewer/?level=${level.identifier}`,
+                            content: LEVEL_URL + level.identifier,
                             embeds: [],
                             allowed_mentions: { parse: [] }
                         }
@@ -707,13 +608,13 @@ export default {
                 }
             } else if (command == "oldest") {
                 const queryCreator = json.data.options[0].value;
-                const userSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
+                const userSearch = `${API_URL}list?max_format_version=9&type=user_name&search_term=${queryCreator}`;
                 const searchResponse = await fetch(userSearch);
                 const searchData = await searchResponse.json();
                 if(searchData.length >= 1) {
                     const user = searchData[0];
                     const userId = user.user_id;
-                    const levelSearch = `https://api.slin.dev/grab/v1/list?max_format_version=9&user_id=${userId}`;
+                    const levelSearch = `${API_URL}list?max_format_version=9&user_id=${userId}`;
                     const levelResponse = await fetch(levelSearch);
                     const levelData = await levelResponse.json();
                     if (levelData.length >= 1) {
@@ -722,7 +623,7 @@ export default {
                             type: 4,
                             data: {
                                 tts: false,
-                                content: `https://grabvr.quest/levels/viewer/?level=${level.identifier}`,
+                                content: LEVEL_URL + level.identifier,
                                 embeds: [],
                                 allowed_mentions: { parse: [] }
                             }
@@ -776,7 +677,7 @@ export default {
                             embeds: [{
                                 title: `#${position + 1} Hardest Level`,
                                 description: `**${level.title}** by ${level.creator}`,
-                                url: `https://grabvr.quest/levels/viewer/?level=${level.id || ""}`,
+                                url: LEVEL_URL + (level.id || ""),
                                 color: 0xff0000
                             }],
                             allowed_mentions: { parse: [] }
@@ -863,7 +764,7 @@ export default {
                             position = json.data.options[1].value;
                         }
                         const levelId = levelLink.split("level=")[1];
-                        const levelUrl = `https://api.slin.dev/grab/v1/details/${levelId.replace(":", "/")}`;
+                        const levelUrl = `${API_URL}details/${levelId.replace(":", "/")}`;
                         const levelResponse = await fetch(levelUrl);
                         const levelData = await levelResponse.json();
                         const listItem = {
@@ -986,22 +887,8 @@ export default {
                 });
             } else if (command == "wiki") {
                 const query = json.data.options[0].value;
-                // const sort = json.data.options[1]?.value;
 
-                return Response.json({
-                    type: 4,
-                    data: {
-                        tts: false,
-                        content: test(),
-                        embeds: [],
-                        allowed_mentions: { parse: [] }
-                    }
-                });
-
-                let wikiUrl = `https://wiki.grab-tools.live/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=7`;
-                // if (sort) {
-                //     wikiUrl += `&srsort=${sort}`;
-                // }
+                let wikiUrl = `${WIKI_URL}/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=7`;
 
                 const wikiResponse = await fetch(wikiUrl);
                 const wikiData = await wikiResponse.json();
@@ -1022,7 +909,7 @@ export default {
                 let embed = {
                     type: "rich",
                     title: `Results for ${query}`,
-                    url: `https://wiki.grab-tools.live/wiki/Special:Search?search=${encodeURIComponent(query)}`,
+                    url: `${WIKI_URL}/wiki/Special:Search?search=${encodeURIComponent(query)}`,
                     description: "",
                     color: 0x006b2d,
                     footer: {
@@ -1032,7 +919,7 @@ export default {
 
                 for (const result of wikiData.query.search) {
                     const { title } = result;
-                    const pageUrl = `https://wiki.grab-tools.live/w/index.php?title=${encodeURIComponent(title)}`;
+                    const pageUrl = `${WIKI_URL}/w/index.php?title=${encodeURIComponent(title)}`;
 
                     embed.description += `[${title}](<${pageUrl}>)\n`;
                 }
@@ -1069,7 +956,7 @@ export default {
                         }
                     });
                 }
-                const leaderboardUrl = `https://api.slin.dev/grab/v1/statistics_top_leaderboard/${levelID.replace(":", "/")}`;
+                const leaderboardUrl = `${API_URL}statistics_top_leaderboard/${levelID.replace(":", "/")}`;
                 const leaderboardResponse = await fetch(leaderboardUrl);
                 const leaderboardData = await leaderboardResponse.json();
                 let description = [];
@@ -1094,7 +981,7 @@ export default {
                             "description": description.join("\n"),
                             "color": 0x618dc3,
                             "fields": [],
-                            "url": `https://grabvr.quest/levels/viewer/?level=${levelID}`
+                            "url": LEVEL_URL + levelID
                         }],
                         allowed_mentions: { parse: [] }
                     }
@@ -1123,7 +1010,7 @@ export default {
                     });
                 }
                 let userID = levelID.split(":")[0];
-                const creatorUrl = `https://grabvr.quest/levels?tab=tab_other_user&user_id=${userID}`;
+                const creatorUrl = PLAYER_URL + userID;
                 let userIDInt = [...userID.toString()].reduce((r,v) => r * BigInt(36) + BigInt(parseInt(v,36)), 0n);
                 userIDInt >>= BigInt(32);
                 userIDInt >>= BigInt(32);
@@ -1131,7 +1018,7 @@ export default {
                 const unixTime = Math.floor(joinDate.getTime() / 1000);
                 const joinString = `<t:${unixTime}>`;
 
-                const playerDetailsUrl = `https://api.slin.dev/grab/v1/get_user_info?user_id=${userID}`;
+                const playerDetailsUrl = `${API_URL}get_user_info?user_id=${userID}`;
                 const playerDetailsResponse = await fetch(playerDetailsUrl);
                 const playerDetailsData = await playerDetailsResponse.json();
                 const playerName = playerDetailsData.user_name;
@@ -1140,8 +1027,8 @@ export default {
                 const is_admin = playerDetailsData.is_admin;
                 const is_moderator = playerDetailsData.is_moderator;
                 const is_verifier = playerDetailsData.is_verifier;
-                const is_super = ["29sgp24f1uorbc6vq8d2k", "2ak0ysv35egakgfilswpy"].includes(userID);
-                const is_owner = userID == "290oi9frh8eihrh1r5z0q";
+                const is_super = isSuperMod(userID);
+                const is_owner = isOwner(userID);
                 const roleString = [
                     is_super ? "Super Mod" : "",
                     is_creator ? "Creator" : "",
@@ -1207,14 +1094,14 @@ export default {
                         }
                     });
                 }
-                const detailsUrl = `https://api.slin.dev/grab/v1/details/${levelID.replace(":", "/")}`;
+                const detailsUrl = `${API_URL}details/${levelID.replace(":", "/")}`;
                 const detailsResponse = await fetch(detailsUrl);
                 const detailsData = await detailsResponse.json();
                 const complexity = detailsData.complexity;
 
                 const playerID = levelID.split(":")[0];
 
-                const playerDetailsUrl = `https://api.slin.dev/grab/v1/get_user_info?user_id=${playerID}`;
+                const playerDetailsUrl = `${API_URL}get_user_info?user_id=${playerID}`;
                 const playerDetailsResponse = await fetch(playerDetailsUrl);
                 const playerDetailsData = await playerDetailsResponse.json();
                 const is_creator = playerDetailsData.is_creator;
@@ -1250,17 +1137,17 @@ export default {
                         }
                     });
                 }
-                const detailsUrl = `https://api.slin.dev/grab/v1/details/${levelID.replace(":", "/")}`;
+                const detailsUrl = `${API_URL}details/${levelID.replace(":", "/")}`;
                 const detailsResponse = await fetch(detailsUrl);
                 const detailsData = await detailsResponse.json();
                 const iterations = detailsData.iteration;
 
                 let iterationList = [];
                 let length = 0;
-                let lastString = `...\n[Iteration ${1}](<https://grabvr.quest/levels/viewer?level=${levelID}:${1}>)`;
+                let lastString = `...\n[Iteration ${1}](<${LEVEL_URL}${levelID}:${1}>)`;
                 let endString = `... (XXX of XXX iterations shown)`;
                 for (let i = iterations; i > 0; i--) {
-                    let str = `[Iteration ${i}](<https://grabvr.quest/levels/viewer?level=${levelID}:${i}>)`;
+                    let str = `[Iteration ${i}](<${LEVEL_URL}${levelID}:${i}>)`;
                     if (length == 0) {
                         str += " (current)";
                     }
@@ -1307,11 +1194,11 @@ export default {
                         }
                     });
                 }
-                const detailsUrl = `https://api.slin.dev/grab/v1/details/${levelID.replace(":", "/")}`;
+                const detailsUrl = `${API_URL}details/${levelID.replace(":", "/")}`;
                 const detailsResponse = await fetch(detailsUrl);
                 const detailsData = await detailsResponse.json();
                 const image_iteration = detailsData.iteration_image;
-                const imageUrl = `https://grab-images.slin.dev/level_${levelID.replace(":", "_")}_${image_iteration}.png`;
+                const imageUrl = `${IMAGES_API_URL}level_${levelID.replace(":", "_")}_${image_iteration}.png`;
 
                 return Response.json({
                     type: 4,
@@ -1361,11 +1248,10 @@ export default {
                 }
 
                 const filterer = json.data.options[0].value; // "level.change > 1000" // props op value // multiple with &&
-                // const sorter = json.data.options[1].value; // "level.change" // props
                 const limiter = json.data.options[1].value; // 20 // integer
                 const returner = json.data.options[2].value; // "level.title" // props // multiple with &&
 
-                const response = await fetch("https://grab-tools.live/stats_data/all_verified.json");
+                const response = await fetch(STATS_API_URL + "all_verified.json");
                 const data = await response.json();
 
                 const filtered = [];
@@ -1471,9 +1357,9 @@ export default {
                     });
                     
                     if (valid) {
-                        level.link = `https://grabvr.quest/levels/viewer/${level.identifier}`;
+                        level.link = LEVEL_URL + level.identifier;
                         level.creator = level.creators && level.creators.length > 0 ? level.creators[0] : '';
-                        level.creator_link = `https://grabvr.quest/levels?tab=tab_other_user&user_id=${level.identifier.split(":")[0]}`;
+                        level.creator_link = PLAYER_URL + level.identifier.split(":")[0];
                         level.date = new Date(1000 * (level.update_timestamp || level.creation_timestamp || 0)).toDateString();
                         filtered.push(level);
                         if (filtered.length >= limiter) {

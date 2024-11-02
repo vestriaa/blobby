@@ -319,12 +319,6 @@ export const commands = [
                 required: true,
                 type: 3
             },
-            // {
-            //     name: "sort",
-            //     description: "the sort key",
-            //     required: false,
-            //     type: 3
-            // },
             {
                 name: "limit",
                 description: "the limit",
