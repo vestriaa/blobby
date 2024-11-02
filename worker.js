@@ -1,5 +1,6 @@
 const nacl = require("tweetnacl");
 import { Buffer } from 'node:buffer';
+import { test } from './utils.js';
 
 export default {
     async generateLevelEmbed(level, fields = []) {
@@ -986,6 +987,16 @@ export default {
             } else if (command == "wiki") {
                 const query = json.data.options[0].value;
                 // const sort = json.data.options[1]?.value;
+
+                return Response.json({
+                    type: 4,
+                    data: {
+                        tts: false,
+                        content: test(),
+                        embeds: [],
+                        allowed_mentions: { parse: [] }
+                    }
+                });
 
                 let wikiUrl = `https://wiki.grab-tools.live/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=7`;
                 // if (sort) {
