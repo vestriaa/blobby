@@ -1,20 +1,6 @@
 const nacl = require("tweetnacl");
 import { Buffer } from 'node:buffer';
-import {
-    WEBSITE_URL,
-    VIEWER_URL,
-    STATS_URL,
-    WIKI_URL,
-
-    LEVEL_URL,
-    PLAYER_URL,
-
-    API_URL,
-    IMAGES_API_URL,
-    STATS_API_URL,
-
-    FORMAT_VERSION,
-} from './config.js'
+import * as CONFIG from './config.js'
 
 function colorComponentToHex(component) {
     const hex = Math.round(component * 255).toString(16);
@@ -42,20 +28,20 @@ async function generateLevelEmbed(level, fields = []) {
         "color": 0x618dc3,
         "fields": fields,
         "thumbnail": {
-            "url": IMAGES_API_URL + level?.images?.thumb?.key,
+            "url": CONFIG.IMAGES_API_URL + level?.images?.thumb?.key,
             "height": 288,
             "width": 512
         },
         "author": {
-            "name": this.getFeaturedName(level.identifier.split(":")[0]) || level.creators ? level.creators[0] : '',
-            "url": PLAYER_URL + level.identifier.split(":")[0],
+            "name": getFeaturedName(level.identifier.split(":")[0]) || level.creators ? level.creators[0] : '',
+            "url": CONFIG.PLAYER_URL + level.identifier.split(":")[0],
         },
-        "url": STATS_URL + "/stats"
+        "url": CONFIG.STATS_URL + "/stats"
     }
 }
 
 async function getPlayerDetails(query) {
-    const searchUrl = `${API_URL}list?type=user_name&search_term=${query}`;
+    const searchUrl = `${CONFIG.API_URL}list?type=user_name&search_term=${query}`;
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
     if(searchData.length >= 1) {
@@ -91,7 +77,7 @@ async function getPlayerDetails(query) {
 }
 
 async function getLevel(queryTitle, queryCreator) {
-    const levelSearch = `${API_URL}list?max_format_version=${FORMAT_VERSION}&type=search&search_term=${queryTitle}`;
+    const levelSearch = `${CONFIG.API_URL}list?max_format_version=${CONFIG.FORMAT_VERSION}&type=search&search_term=${queryTitle}`;
     const levelResponse = await fetch(levelSearch);
     const levelData = await levelResponse.json();
     if (queryCreator == '') {
@@ -113,14 +99,14 @@ async function getLevel(queryTitle, queryCreator) {
 }
 
 async function getTrendingLevels() {
-    const response = await fetch(STATS_API_URL + "all_verified.json");
+    const response = await fetch(CONFIG.STATS_API_URL + "all_verified.json");
     const data = await response.json();
     const trending = data.sort((a, b) => b.change - a.change).slice(0, 200);
     return trending;
 }
 
 async function getFeaturedName(id) {
-    const response = await fetch(STATS_API_URL + 'featured_creators.json');
+    const response = await fetch(CONFIG.STATS_API_URL + 'featured_creators.json');
     const data = await response.json();
     for (let featured_creator of data || []) {
         if (featured_creator.list_key.split(":")[1] == id) {
@@ -160,7 +146,6 @@ export {
     getPlayerDetails,
     getLevel,
     getTrendingLevels,
-    getFeaturedName,
     validate,
     isSuperMod,
     isOwner,
