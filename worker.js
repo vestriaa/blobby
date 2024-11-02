@@ -31,7 +31,8 @@ export default {
     async fetch(request, env, ctx) {
 
         // validate
-        const isVerified = await validate(request, env);
+        const body = await request.text();
+        const isVerified = await validate(body, request, env);
         if (!isVerified) {
             return new Response("invalid request signature", {status: 401});
         }

@@ -130,10 +130,9 @@ async function getFeaturedName(id) {
     return undefined;
 }
 
-async function validate(request, env) {
+async function validate(body, request, env) {
     const signature = request.headers.get("x-signature-ed25519");
     const timestamp = request.headers.get("x-signature-timestamp");
-    const body = await request.text();
     return signature && timestamp && nacl.sign.detached.verify(
         Buffer.from(timestamp + body),
         Buffer.from(signature, "hex"),
