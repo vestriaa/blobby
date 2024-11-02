@@ -12,7 +12,7 @@ const STATS_API_URL = STATS_URL + "/stats_data/";
 
 const FORMAT_VERSION = 9999;
 
-export default {
+const CONFIG = {
     WEBSITE_URL,
     VIEWER_URL,
     STATS_URL,
@@ -27,3 +27,5 @@ export default {
 
     FORMAT_VERSION,
 };
+
+export default CONFIG;

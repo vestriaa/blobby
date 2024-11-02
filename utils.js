@@ -138,7 +138,7 @@ function isOwner(id) {
     return id == "290oi9frh8eihrh1r5z0q"; // Slin
 }
 
-export default {
+const UTILS = {
     generateLevelEmbed,
     colorComponentToHex,
     numberWithCommas,
@@ -150,3 +150,5 @@ export default {
     isSuperMod,
     isOwner,
 };
+
+export default UTILS;
