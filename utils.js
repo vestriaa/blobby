@@ -1,7 +1,5 @@
-export default {
+function test() {
+    return "Testing!";
+}
 
-    test() {
-        return "Testing!";
-    }
-
-};
+export { test };
