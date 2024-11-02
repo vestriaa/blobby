@@ -6,7 +6,7 @@ export async function script(json, env) {
     const limiter = json.data.options[1].value; // 20 // integer
     const returner = json.data.options[2].value; // "level.title" // props // multiple with &&
 
-    const response = await fetch(CONFIG.STATS_API + "all_verified.json");
+    const response = await fetch(CONFIG.STATS_API_URL + "all_verified.json");
     const data = await response.json();
 
     const filtered = [];

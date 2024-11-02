@@ -2,7 +2,7 @@ import CONFIG from '../config.js'
 import UTILS from '../utils.js'
 
 export async function topUnbeaten(json, env) {
-    const levelResponse = await fetch(CONFIG.STATS_API + "unbeaten_levels.json");
+    const levelResponse = await fetch(CONFIG.STATS_API_URL + "unbeaten_levels.json");
     const levelData = await levelResponse.json();
     const level = levelData[0];
     const fields = [

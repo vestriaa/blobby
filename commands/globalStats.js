@@ -2,7 +2,7 @@ import CONFIG from '../config.js'
 import UTILS from '../utils.js'
 
 export async function globalStats(json, env) {
-    const levelResponse = await fetch(CONFIG.STATS_API + "all_verified.json");
+    const levelResponse = await fetch(CONFIG.STATS_API_URL + "all_verified.json");
     const levelData = await levelResponse.json();
     let globalStats = {
         "plays": 0,
