@@ -1,4 +1,4 @@
-import * as CONFIG from './config.js'
+import * as CONFIG from '../config.js'
 import * as UTILS from '../utils.js'
 
 export async function getCreator(json, env) {
