@@ -892,6 +892,10 @@ export default {
                 let wikiUrl = `${WIKI_URL}/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=7`;
 
                 const wikiResponse = await fetch(wikiUrl);
+                const text = await wikiResponse.text();
+                if (text.charAt(0) == "<") {
+                    throw new Error(text);
+                }
                 const wikiData = await wikiResponse.json();
 
                 if (wikiData?.query?.search?.length == 0) {
