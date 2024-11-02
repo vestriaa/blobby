@@ -1,4 +1,4 @@
-import { validate } from './utils.js';
+import UTILS from './utils.js';
 import { commands } from './commands/commands.js';
 
 export default {
@@ -6,7 +6,7 @@ export default {
 
         // validate
         const body = await request.text();
-        const isVerified = await validate(body, request, env);
+        const isVerified = await UTILS.validate(body, request, env);
         if (!isVerified) {
             return new Response("invalid request signature", {status: 401});
         }
