@@ -88,7 +88,7 @@ export async function hardest(json, env) {
             const listItem = {
                 "title": levelData.title,
                 "id": levelId,
-                "creator": levelData.creators.length > 0 ? levelData.creators[0] : "",
+                "creator": (levelData.creators || []).length > 0 ? levelData.creators[0] : "",
             };
             let extra = "";
             if (position) {
