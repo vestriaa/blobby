@@ -26,11 +26,12 @@ export async function ask(json, env) {
             }]
         })
     });
+    const data = await response.json();
     return Response.json({
         type: 4,
         data: {
             tts: false,
-            content: response?.candidates[0]?.content?.parts[0]?.text || ":3",
+            content: data?.candidates[0]?.content?.parts[0]?.text || ":3",
             embeds: [],
             allowed_mentions: { parse: [] }
         }
