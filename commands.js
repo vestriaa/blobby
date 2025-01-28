@@ -38,6 +38,34 @@ export const commands = [
         contexts: [0, 1, 2]
     },
     {
+        name: "echo",
+        description: "say something",
+        options: [
+            {
+                name: "message",
+                description: "Something to say",
+                required: true,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
+        name: "ask",
+        description: "Ask idnex something",
+        options: [
+            {
+                name: "message",
+                description: "Something to ask idnex",
+                required: true,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
         name: "trending",
         description: "Get the current trending levels list",
     },

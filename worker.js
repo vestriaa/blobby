@@ -25,6 +25,8 @@ import { getComplexity } from './commands/getComplexity.js'
 import { getIterations } from './commands/getIterations.js'
 import { getThumbnail } from './commands/getThumbnail.js'
 import { script } from './commands/script.js'
+import { ask } from './commands/ask.js'
+import { echo } from './commands/echo.js'
 
 export default {
     async fetch(request, env, ctx) {
@@ -72,6 +74,8 @@ export default {
                 "Get iterations": getIterations,
                 "Get thumbnail": getThumbnail,
                 script,
+                ask,
+                echo,
             };
             if (command in commands) {
                 const response =  await commands[command](json, env);
