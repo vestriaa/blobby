@@ -1,5 +1,5 @@
 export async function ask(json, env) {
-    if (!json.member.user.id == "649165311257608192")  {
+    if (json.member.user.id != "649165311257608192")  {
         return Response.json({
             type: 4,
             data: {
