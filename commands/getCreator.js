@@ -42,15 +42,15 @@ export async function getCreator(json, env) {
     const is_admin = playerDetailsData.is_admin;
     const is_moderator = playerDetailsData.is_moderator;
     const is_verifier = playerDetailsData.is_verifier;
-    const is_super = UTILS.isSuperMod(userID);
+    const is_super = playerDetailsData.is_supermoderator;
     const is_owner = UTILS.isOwner(userID);
     const roleString = [
-        is_super ? "Super Mod" : "",
-        is_creator ? "Creator" : "",
+        is_owner ? "Owner" : "",
         is_admin ? "Admin" : "",
+        is_super ? "Super Mod" : "",
         is_moderator ? "Moderator" : "",
         is_verifier ? "Verifier" : "",
-        is_owner ? "Owner" : ""
+        is_creator ? "Creator" : ""
     ].filter(
         role => role.length > 0
     )

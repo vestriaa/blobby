@@ -45,15 +45,27 @@ async function getPlayerDetails(query) {
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
     if(searchData.length >= 1) {
-        // exact matches
+        // exact match
         for (let result of searchData) {
             if (result.user_name == query) {
                 return result;
             }
         }
-        // lowercase
+        // case insensitive match
         for (let result of searchData) {
             if (result.user_name.toLowerCase() == query.toLowerCase()) {
+                return result;
+            }
+        }
+        // admin
+        for (let result of searchData) {
+            if (result.is_admin) {
+                return result;
+            }
+        }
+        // supermoderator
+        for (let result of searchData) {
+            if (result.is_supermoderator) {
                 return result;
             }
         }
@@ -63,7 +75,13 @@ async function getPlayerDetails(query) {
                 return result;
             }
         }
-        // is_creator
+        // verifier
+        for (let result of searchData) {
+            if (result.is_verifier) {
+                return result;
+            }
+        }
+        // creator
         for (let result of searchData) {
             if (result.is_creator) {
                 return result;
@@ -71,9 +89,8 @@ async function getPlayerDetails(query) {
         }
         // first
         return searchData[0];
-    } else {
-        return false;
     }
+    return false;
 }
 
 async function getLevel(queryTitle, queryCreator) {
@@ -126,14 +143,6 @@ async function validate(body, request, env) {
     );
 }
 
-function isSuperMod(id) {
-    return [
-        "29sgp24f1uorbc6vq8d2k", // dotindex
-        "2ak0ysv35egakgfilswpy", // EBSpark
-        "2awf62f0y60gptc9cbecf" // Eclipse
-    ].includes(id);
-}
-
 function isOwner(id) {
     return id == "290oi9frh8eihrh1r5z0q"; // Slin
 }
@@ -147,7 +156,6 @@ const UTILS = {
     getLevel,
     getTrendingLevels,
     validate,
-    isSuperMod,
     isOwner,
 };
 

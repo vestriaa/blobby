@@ -64,7 +64,7 @@ export async function whoIs(json, env) {
     if (player.is_verifier) { details.roles.verifier = true; }
     if (player.is_creator) { details.roles.creator = true; }
     if (player.is_moderator) { details.roles.moderator = true; }
-    if (UTILS.isSuperMod(player.user_id)) { details.roles.super_mod = true; }
+    if (player.is_supermoderator) { details.roles.super_mod = true; }
     if (player.is_admin) { details.roles.admin = true; }
     if (UTILS.isOwner(player.user_id)) { details.roles.owner = true; }
 
