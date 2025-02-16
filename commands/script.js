@@ -32,8 +32,8 @@ export async function script(json, env) {
                 anyCase = true;
             }
 
-            if (!compare.includes("\"")) {
-                if (compare.includes(".")) {
+            if (!compare?.includes("\"")) {
+                if (compare?.includes(".")) {
                     compare = parseFloat(compare)
                 } else {
                     compare = parseInt(compare, 10);
