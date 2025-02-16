@@ -87,22 +87,22 @@ export async function script(json, env) {
                     }
                     break;
                 case "in":
-                    if (!compare.includes(prop)) {
+                    if (!compare?.includes(prop)) {
                         valid = false;
                     }
                     break;
                 case "!in":
-                    if (compare.includes(prop)) {
+                    if (compare?.includes(prop)) {
                         valid = false;
                     }
                     break;
                 case "includes":
-                    if (!prop.includes(compare)) {
+                    if (!prop?.includes(compare)) {
                         valid = false;
                     }
                     break;
                 case "!includes":
-                    if (prop.includes(compare)) {
+                    if (prop?.includes(compare)) {
                         valid = false;
                     }
                     break;
