@@ -362,6 +362,34 @@ export const commands = [
         ],
         integration_types: [0, 1],
         contexts: [0, 1, 2]
+    },
+    {
+        name: "block",
+        description: "Block user (index only)",
+        options: [
+            {
+                name: "id",
+                description: "user identifier",
+                required: false,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
+        name: "unblock",
+        description: "Unblock user (index only)",
+        options: [
+            {
+                name: "id",
+                description: "user identifier",
+                required: false,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
     }
     // {
     //     name: "Add to fanart",

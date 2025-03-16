@@ -27,6 +27,8 @@ import { getThumbnail } from './commands/getThumbnail.js'
 import { script } from './commands/script.js'
 import { ask } from './commands/ask.js'
 import { echo } from './commands/echo.js'
+import { block } from './commands/block.js'
+import { unblock } from './commands/unblock.js'
 
 export default {
     async fetch(request, env, ctx) {
@@ -76,6 +78,8 @@ export default {
                 script,
                 ask,
                 echo,
+                block,
+                unblock
             };
             if (command in commands) {
                 const response =  await commands[command](json, env);
