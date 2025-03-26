@@ -378,6 +378,26 @@ export const commands = [
         contexts: [0, 1, 2]
     },
     {
+        name: "checkstolen",
+        description: "Check two accounts for copied level",
+        options: [
+            {
+                name: "id1",
+                description: "user id of original creator",
+                required: true,
+                type: 3
+            },
+            {
+                name: "id2",
+                description: "user id of potential theif",
+                required: true,
+                type: 3
+            }
+        ],
+        integration_types: [0, 1],
+        contexts: [0, 1, 2]
+    },
+    {
         name: "unblock",
         description: "Unblock user (index only)",
         options: [

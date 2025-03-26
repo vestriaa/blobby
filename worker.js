@@ -29,6 +29,7 @@ import { ask } from './commands/ask.js'
 import { echo } from './commands/echo.js'
 import { block } from './commands/block.js'
 import { unblock } from './commands/unblock.js'
+import { checkStolen } from './commands/checkStolen.js'
 
 export default {
     async fetch(request, env, ctx) {
@@ -79,7 +80,8 @@ export default {
                 ask,
                 echo,
                 block,
-                unblock
+                unblock,
+                "checkstolen": checkStolen,
             };
             if (command in commands) {
                 const response =  await commands[command](json, env);
