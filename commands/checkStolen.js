@@ -1,6 +1,6 @@
 import CONFIG from '../config.js'
 
-export async function player(json, env) {
+export async function checkStolen(json, env) {
     const id1 = json.data.options[0].value;
     const id2 = json.data.options[1].value;
 
