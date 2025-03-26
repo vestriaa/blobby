@@ -18,7 +18,6 @@ export async function checkStolen(json, env) {
         for (let other of user2Data) {
             if (level.identifier.split(":")[1] === other.identifier.split(":")[1]) {
                 overlaps.push([level.identifier, other.identifier]);
-                break;
             }
         }
     }
