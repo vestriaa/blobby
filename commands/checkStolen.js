@@ -2,7 +2,10 @@ import CONFIG from '../config.js'
 
 export async function checkStolen(json, env) {
     const id1 = json.data.options[0].value;
-    const id2 = json.data.options[1].value;
+    let id2 = undefined;
+    if (json.data.options.length > 1 && json.data.options[1]?.value) {
+        id2 = json.data.options[1].value;
+    }
 
     const user1Search = `${CONFIG.API_URL}list?max_format_version=${CONFIG.FORMAT_VERSION}&user_id=${id1}`;
     const user1Response = await fetch(user1Search);
