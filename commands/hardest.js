@@ -11,15 +11,15 @@ async function addChange(change, env) {
         changesData.push(change);
     } else {
         if (change.description == "added to position") {
-            if (changesData[changeIndex].i == position - 1) {
+            if (changesData[changeIndex].i == change.i) {
                 changesData.splice(changeIndex, 1);
             } else {
                 changesData[changeIndex].description = "moved to position";
-                changesData[changeIndex].i = position - 1;
+                changesData[changeIndex].i = change.i;
             }
         } else if (change.description == "moved to position") {
             changesData[changeIndex].description = "moved to position";
-            changesData[changeIndex].i = position - 1;
+            changesData[changeIndex].i = change.i;
         } else if (change.description == "removed from position") {
             changesData[changeIndex].description = "removed from position";
         }
