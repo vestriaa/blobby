@@ -21,7 +21,11 @@ async function addChange(change, env) {
             changesData[changeIndex].description = "moved to position";
             changesData[changeIndex].i = change.i;
         } else if (change.description == "removed from position") {
-            changesData[changeIndex].description = "removed from position";
+            if (changesData[changeIndex].i == change.i) {
+                changesData.splice(changeIndex, 1);
+            } else {
+                changesData[changeIndex].description = "removed from position";
+            }
         }
     }
 
