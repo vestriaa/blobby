@@ -6,7 +6,7 @@ async function addChange(change, env) {
     if (!changes) changes = "[]";
     let changesData = JSON.parse(changes);
 
-    let changeIndex = changesData.findIndex(item => item.id == levelId);
+    let changeIndex = changesData.findIndex(item => item.id == change.id);
     if (changeIndex == -1) {
         changesData.push(change);
     } else {
