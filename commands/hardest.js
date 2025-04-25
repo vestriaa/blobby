@@ -170,7 +170,9 @@ export async function hardest(json, env) {
             const levelPosition = json.data.options[1].value;
             const index = levelPosition - 1;
             const change = {
-                ...listData[index],
+                "title": listData[index].title,
+                "id": listData[index].id,
+                "creator": listData[index].creator,
                 "description": "removed from position",
                 "i": index
             };
