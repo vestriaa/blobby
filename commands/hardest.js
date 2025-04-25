@@ -1,6 +1,33 @@
 import CONFIG from '../config.js'
 import UTILS from '../utils.js'
 
+async function addChange(change, env) {
+    let changes = await env.NAMESPACE.get("list_changes");
+    if (!changes) changes = "[]";
+    let changesData = JSON.parse(changes);
+
+    let changeIndex = changesData.findIndex(item => item.id == levelId);
+    if (changeIndex == -1) {
+        changesData.push(change);
+    } else {
+        if (change.description == "added to position") {
+            if (changesData[changeIndex].i == position - 1) {
+                changesData.splice(changeIndex, 1);
+            } else {
+                changesData[changeIndex].description = "moved to position";
+                changesData[changeIndex].i = position - 1;
+            }
+        } else if (change.description == "moved to position") {
+            changesData[changeIndex].description = "moved to position";
+            changesData[changeIndex].i = position - 1;
+        } else if (change.description == "removed from position") {
+            changesData[changeIndex].description = "removed from position";
+        }
+    }
+
+    await env.NAMESPACE.put("list_changes", JSON.stringify(changesData));
+}
+
 export async function hardest(json, env) {
     const hardestRoleId = "1224307852248612986";
     const func = json.data.options[0].value;
@@ -95,8 +122,17 @@ export async function hardest(json, env) {
                 listData.splice(position - 1, 0, listItem);
                 extra = `at position ${position}`;
             } else {
+                position = listData.length + 1;
                 listData.push(listItem);
             }
+
+            let change = {
+                ...listItem,
+                "description": "added to position",
+                "i": position - 1
+            }
+            await addChange(change, env);
+
             await env.NAMESPACE.put("list", JSON.stringify(listData));
             return Response.json({
                 type: 4,
@@ -133,14 +169,19 @@ export async function hardest(json, env) {
             let listData = JSON.parse(list);
             const levelPosition = json.data.options[1].value;
             const index = levelPosition - 1;
-            const title = listData[index].title;
+            const change = {
+                ...listData[index],
+                "description": "removed from position",
+                "i": index
+            };
+            await addChange(change, env);
             listData.splice(index, 1);
             await env.NAMESPACE.put("list", JSON.stringify(listData));
             return Response.json({
                 type: 4,
                 data: {
                     tts: false,
-                    content: `Removed ${title} from list`,
+                    content: `Removed ${change.title} from list`,
                     embeds: [],
                     allowed_mentions: { parse: [] }
                 }
@@ -181,6 +222,14 @@ export async function hardest(json, env) {
                 }
                 listData.splice(oldIndex, 1);
                 listData.splice(newIndex - 1, 0, oldItem);
+
+                const change = {
+                    ...oldItem,
+                    "description": "moved to position",
+                    "i": newIndex - 1
+                };
+                await addChange(change, env);
+
                 await env.NAMESPACE.put("list", JSON.stringify(listData));
                 return Response.json({
                     type: 4,
