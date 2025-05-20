@@ -59,7 +59,8 @@ export const commands = [
                 name: "message",
                 description: "Something to ask idnex",
                 required: true,
-                type: 3
+                type: 3,
+                max_length: 300
             }
         ],
         integration_types: [0, 1],

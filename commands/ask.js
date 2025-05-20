@@ -11,6 +11,19 @@ export async function ask(json, env) {
     //     });
     // }
     const query = json.data.options[0].value;
+
+    if (query.length > 300 && json.member.user.id != "649165311257608192") {
+        return Response.json({
+            type: 4,
+            data: {
+                tts: false,
+                content: ":3",
+                embeds: [],
+                allowed_mentions: { parse: [] }
+            }
+        });
+    }
+
     let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
     endpoint += env.GEMINI_KEY;
 
