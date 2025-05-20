@@ -3,7 +3,7 @@ import { commands } from './commands.js';
 
 const token = process.env.DISCORD_TOKEN;
 const applicationId = process.env.DISCORD_APPLICATION_ID;
-const guildId = "1048213818775437394";
+const guildId = "1284963238018285629";
 
 async function registerCommands() {
     const headers = {
