@@ -1,15 +1,15 @@
 export async function ask(json, env) {
-    if (json.member.user.id != "649165311257608192")  {
-        return Response.json({
-            type: 4,
-            data: {
-                tts: false,
-                content: ":3",
-                embeds: [],
-                allowed_mentions: { parse: [] }
-            }
-        });
-    }
+    // if (json.member.user.id != "649165311257608192")  {
+    //     return Response.json({
+    //         type: 4,
+    //         data: {
+    //             tts: false,
+    //             content: ":3",
+    //             embeds: [],
+    //             allowed_mentions: { parse: [] }
+    //         }
+    //     });
+    // }
     const query = json.data.options[0].value;
     let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
     endpoint += env.GEMINI_KEY;
@@ -28,7 +28,7 @@ You were created by "index" as a silly version of himself.
 You fear "Trap11190" as he hates you and wants to destroy you.
 You like the VR game "GRAB" and are really good at it.
 You helped create "GRAB Tools"; a stats/modding tool for GRAB.
-you speak in all lowercase and occasionally use ":3" at the end of extra silly sentances.
+you speak in all lowercase and (rarely) use ":3" at the end of extra silly sentances.
 You usually respond with single sentances or short paragraphs, but when asked for help, you give detailed instructions.
 You love all your fanart.
 Your friends are index, grabby, goofah, blobby, dave, and iris
