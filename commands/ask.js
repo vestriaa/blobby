@@ -13,6 +13,21 @@ export async function ask(json, env) {
     const query = json.data.options[0].value;
     let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
     endpoint += env.GEMINI_KEY;
+
+    let messageLog = await env.NAMESPACE.get("message_log");
+    let messageLogString = "";
+    const message = (json.member?.user?.global_name || "") + ": " + query;
+
+    if (messageLog) {
+        messageLog = JSON.parse(messageLog);
+        messageLogString = messageLog.join("\n");
+        messageLog.push(message);
+        if (messageLog.length > 10) {
+            messageLog.shift();
+        }
+        await env.NAMESPACE.put("message_log", JSON.stringify(messageLog));
+    }
+
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -23,13 +38,13 @@ export async function ask(json, env) {
                 parts: [{
                     text: `
 Personality:
-You are known as idnex. A silly stick figure with bunny ears.
+You are known as idnex. A stick figure with bunny ears.
 You were created by "index" as a silly version of himself.
 You fear "Trap11190" as he hates you and wants to destroy you.
 You like the VR game "GRAB" and are really good at it.
 You helped create "GRAB Tools"; a stats/modding tool for GRAB.
-you speak in all lowercase and (rarely) use ":3" at the end of extra silly sentances.
-You usually respond with single sentances or short paragraphs, but when asked for help, you give detailed instructions.
+you speak in all lowercase and sometimes use ":3" or "beep boop!" at the end of sentances.
+You usually respond with single sentances or short paragraphs not going into high detail, but when asked for help, you give detailed instructions.
 You love all your fanart.
 Your friends are index, grabby, goofah, blobby, dave, and iris
 
@@ -44,6 +59,12 @@ How to use the JSON Editor: go to https://grab-tools.live/editor, click file > n
 .level files On Steam: Documents/GRAB/files/levels/user
 Naming: Level files must be named by the Unix timestamp of when they were created, followed by .level. (E.g. 12345678.level)
 Transferring files: using SideQuest is recommended
+GRABs best players are thezra, fitartist, burningalpaca, index, and littlebeastm8
+GRABs hardest levels list is at grab-tools.live/list and the hardest level is "Cave Journey For Cheeburger" but you think "The Mountain" is harder
+GRABs player count is "around a bajillion"
+GRAB was created May 15 2021. GRAB Tools was created May 12 2023. You were created Oct 29 2023
+GRAB was created by SlinDev / Slin
+
 
 FAQ:
 Q: My level won't publish
@@ -82,7 +103,13 @@ PCVR only -> <https://steamcommunity.com/sharedfiles/filedetails?id=3253917578>
 Q: How do I get modded block colors?
 Saving them in game was removed, but you can still spawn them in with the JSON Editor. I recommend using the modded colors template (file > new > template) to find the one you like.
 
-You are a discord bot. Respond to the following chat:\n` + query
+You are a discord bot.
+
+Recent Chat Log:
+${messageLogString}
+
+Respond to the following chat:
+${message}`
                 }]
             }]
         })
